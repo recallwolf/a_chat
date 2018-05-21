@@ -30,6 +30,10 @@ export default new Router({
         {
           path: 'chatroom',
           component: Chatroom
+        },
+        {
+          path: 'robot',
+          component: Chatroom
         }
       ]
     },

@@ -28,6 +28,8 @@ module.exports = {
       '@': resolve('client'),
       'common': resolve('client/common'),
       'components': resolve('client/components'),
+      'base': resolve('client/base'),
+      'api': resolve('client/api')
     }
   },
   module: {

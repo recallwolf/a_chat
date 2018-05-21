@@ -14,9 +14,9 @@
 			</div>
 		</div>
 
-		<div class="chat-list" v-on:click="toChatroom">
+		<div class="chat-list" v-on:click="toRobot">
 				<div class="chat-pic">
-					<img src="~common/image/avatar.jpg" height="55px" width="55px">
+					<img src="~common/image/cat.png" height="55px" width="55px">
 				</div>
 				<div class="chat-pos">
 					<h1 class="chat-name">图灵机器人</h1>
@@ -42,6 +42,9 @@
 		methods: {
 			toChatroom() {
 				this.$router.push('/chat/chatroom');
+			},
+			toRobot() {
+				this.$router.push('/chat/robot');
 			}
 		},
     components: {
