@@ -20,7 +20,15 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var io = require('socket.io')(server);
 
+io.on('connection', function(socket){
+  var roomid = socket.handshake.query.roomid
+  socket.join(roomid)
+	socket.on('chat message', function(msg){
+    socket.broadcast.to(roomid).emit('chat message', msg)
+  })
+})
 /**
  * Listen on provided port, on all network interfaces.
  */

@@ -17,7 +17,7 @@
 	export default {
 		methods: {
 			toChat() {
-				this.$router.push('/chat');
+				this.$router.push('/chat')
       }
     }
 	}

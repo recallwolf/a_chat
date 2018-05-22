@@ -28,12 +28,14 @@ export default new Router({
       component: Chat,
       children: [
         {
-          path: 'chatroom',
-          component: Chatroom
+          path: 'chatroom/:id',
+          component: Chatroom,
+          props: true
         },
         {
-          path: 'robot',
-          component: Chatroom
+          path: 'robot/:id',
+          component: Chatroom,
+          props: true
         }
       ]
     },

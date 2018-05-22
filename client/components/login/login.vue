@@ -16,10 +16,10 @@
 	export default {
 		methods: {
 			toChat() {
-				this.$router.push('/chat');
+				this.$router.push('/chat')
 			},
 			toRegsiter() {
-				this.$router.push('/register');
+				this.$router.push('/register')
 			}
 		}
 	}

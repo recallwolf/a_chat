@@ -41,13 +41,26 @@
 <script type="text/ecmascript-6">
   import {robot} from 'api/robot'
   import Scroll from 'base/scroll/scroll'
+  import io from 'socket.io-client'
+  let socket = {}
   export default {
+    props: {
+      id: {
+        type: String
+      },
+      room: {
+        type: String
+      }
+    },
     data() {
       return {
         message: '',
         showBtn: false,
         chatmsgs: []
       }
+    },
+    created() {
+      socket = io(`http://localhost:3000?roomid=${this.id}`)
     },
     watch: {
       chatmsgs() {
@@ -56,6 +69,12 @@
           this.$refs.scroll.scrollTo()
         }, 20)
       }
+    },
+    mounted() {
+      var self = this
+      socket.on('chat message', function(msg){
+        self.chatmsgs.push(msg)
+      });
     },
     components: {
       Scroll
@@ -66,10 +85,16 @@
       },
       send() {
         if (this.message != "") {
-          this.chatmsgs.push({user: 'jack', msg: this.message})
-          robot(this.message).then((robotSay) => {
-            this.chatmsgs.push({user: 'robot', msg: robotSay.results[0].values.text});
-          })
+          if (parseInt(this.id) === 0) {
+            this.chatmsgs.push({user: 'jack', msg: this.message})
+            robot(this.message).then((robotSay) => {
+              this.chatmsgs.push({user: 'robot', msg: robotSay.results[0].values.text})
+            })
+          }
+          else {
+            this.chatmsgs.push({user: 'jack', msg: this.message})
+            socket.emit('chat message', {user: 'jack', msg: this.message})
+          }
           this.message = ""
         }
       }

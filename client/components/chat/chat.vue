@@ -2,19 +2,7 @@
   <div>
 		<tab></tab>
 		<div class="chat">
-
-			<div class="chat-list" v-on:click="toChatroom">
-				<div class="chat-pic">
-					<img src="~common/image/avatar.jpg" height="55px" width="55px">
-				</div>
-				<div class="chat-pos">
-					<h1 class="chat-name">聊天室1</h1>
-					<p class="chat-desc">说出你的故事</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="chat-list" v-on:click="toRobot">
+			<div class="chat-list" v-on:click="toRobot">
 				<div class="chat-pic">
 					<img src="~common/image/cat.png" height="55px" width="55px">
 				</div>
@@ -24,9 +12,28 @@
 				</div>
 			</div>
 
-		<transition name="fade">
+			<div class="chat-list" v-on:click="toChatroom(1)">
+				<div class="chat-pic">
+					<img src="~common/image/avatar.jpg" height="55px" width="55px">
+				</div>
+				<div class="chat-pos">
+					<h1 class="chat-name">聊天室1</h1>
+					<p class="chat-desc">说出你的故事</p>
+				</div>
+			</div>
+
+			<div class="chat-list" v-on:click="toChatroom(2)">
+				<div class="chat-pic">
+					<img src="~common/image/avatar.jpg" height="55px" width="55px">
+				</div>
+				<div class="chat-pos">
+					<h1 class="chat-name">聊天室2</h1>
+					<p class="chat-desc">说出你的故事</p>
+				</div>
+			</div>
+
+		</div>
 			<div class="new-chat" v-show="newChat">新建聊天室</div>
-		</transition>
 		<router-view/>
   </div>
 </template>
@@ -40,11 +47,11 @@
 			}
 		},
 		methods: {
-			toChatroom() {
-				this.$router.push('/chat/chatroom');
+			toChatroom(index) {
+				this.$router.push(`/chat/chatroom/${index}`)
 			},
 			toRobot() {
-				this.$router.push('/chat/robot');
+				this.$router.push('/chat/robot/0')
 			}
 		},
     components: {
