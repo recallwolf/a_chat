@@ -21,11 +21,21 @@ app.set('port', port);
 
 var server = http.createServer(app);
 var io = require('socket.io')(server);
+var fs = require('fs');
+var path = require('path')
 
 io.on('connection', function(socket){
   var roomid = socket.handshake.query.roomid
   socket.join(roomid)
+
 	socket.on('chat message', function(msg){
+    socket.broadcast.to(roomid).emit('chat message', msg)
+  })
+
+  socket.on('send file', function(msg) {
+    var rawPath = '../public/' + msg.filename
+    var filePath = path.resolve(__dirname, rawPath)
+    fs.writeFileSync(filePath, msg.file, 'binary')
     socket.broadcast.to(roomid).emit('chat message', msg)
   })
 })

@@ -15,23 +15,47 @@
               <div v-bind:class="{'text-pos-other': message.user==='robot', 'text-pos': message.user!='robot'}">
                 <p v-bind:class="{'text-user-other': message.user==='robot', 'text-user': message.user!='robot'}">{{message.user}}</p>
                 <div v-bind:class="{'text-box-other': message.user==='robot', 'text-box': message.user!='robot'}">
-                  <p class="text-msg">{{message.msg}}</p>
+                  <p class="text-msg" v-html="message.msg"></p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </scroll>
-      <div class="footer">
-        <input class="input" type="text" v-model="message">
+      <div class="footer" ref="footer">
+        <textarea class="input" v-model="message" v-on:focus="display" ref="textarea"></textarea>
         <div class="input-icon">
-          <span class="icon-happy"></span>
           <transition name="display">
-            <span class="icon-plus" v-show="!message"></span>
+            <span class="icon-happy" v-on:click="showEmoji" v-show="!(isImage||isFile)"></span>
+          </transition>
+           <transition name="display">
+            <span class="icon-error" v-show="isImage||isFile" v-on:click="clear"></span>
           </transition>
           <transition name="display">
-            <span class="icon-envelope" v-show="message" v-on:click="send"></span>
+            <span class="icon-plus" v-show="!(message||isFile||isImage)" v-on:click="showUpload"></span>
           </transition>
+          <transition name="display">
+            <span class="icon-envelope" v-show="message||isFile||isImage" v-on:click="send"></span>
+          </transition>
+        </div>
+      </div>
+
+      <div class="emoji-box" v-show="isShowEmoji">
+        <div class="emoji" v-for="(emoji,index) in emojis" v-bind:key="index">
+          <p class="emoji-text" v-on:click="insertEmoji(index)">{{emoji}}</p>
+        </div>
+      </div>
+
+      <div class="upload-box" v-show="isShowUpload">
+        <div class="upload-picture">
+          <span class="icon-pic-pos icon-picture" v-bind:class="{'highlight': isImage}">
+            <input ref="image" type="file"  class="image" v-on:change="image" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
+          </span>
+        </div>
+        <div class="upload-file">
+          <span class="icon-file-pos icon-file" v-bind:class="{'highlight': isFile}">
+            <input ref="file" type="file" class="file" v-on:change="file">
+          </span>
         </div>
       </div>
     </div>
@@ -55,8 +79,12 @@
     data() {
       return {
         message: '',
-        showBtn: false,
-        chatmsgs: []
+        chatmsgs: [],
+        isShowEmoji: false,
+        isShowUpload: false,
+        isFile: false,
+        isImage: false,
+        emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️'],
       }
     },
     created() {
@@ -84,7 +112,7 @@
         this.$router.push('/chat')
       },
       send() {
-        if (this.message != "") {
+        if (this.message != "" && !this.isFile && !this.isImage ) {
           if (parseInt(this.id) === 0) {
             this.chatmsgs.push({user: 'jack', msg: this.message})
             robot(this.message).then((robotSay) => {
@@ -97,6 +125,81 @@
           }
           this.message = ""
         }
+        else if (this.isFile) {
+          if (this.files.length != 0) {
+            let tag = `<a href="http://localhost:3000/${this.files[0].name}" download="http://localhost:3000/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
+            this.chatmsgs.push({user: 'jack', msg: tag})
+            socket.emit('send file', {user: 'jack', msg: tag, file: this.files[0], filename: this.files[0].name})
+          }
+        }
+        else if (this.isImage) {
+          if (this.files.length != 0) {
+            let tag = `<img src="http://localhost:3000/${this.files[0].name}" width="120px" height="120px">`
+            this.chatmsgs.push({user: 'jack', msg: tag})
+            socket.emit('send file', {user: 'jack', msg: tag, file: this.files[0], filename: this.files[0].name})
+          }
+        }
+      },
+      showEmoji() {
+        if (!this.isShowEmoji) {
+          this.$refs.footer.style.bottom = '181px'
+          this.isShowEmoji = !this.isShowEmoji
+        }
+        else if (this.isShowUpload){
+          this.isShowUpload = false
+        }
+        else {
+          this.$refs.footer.style.bottom = '0px'
+          this.isShowEmoji = !this.isShowEmoji
+        }
+      },
+      showUpload() {
+        if (!this.isShowUpload) {
+          this.$refs.footer.style.bottom = '181px'
+          this.isShowUpload = !this.isShowUpload
+        }
+        else if (this.isShowEmoji){
+          this.isShowEmoji = false
+        }
+        else {
+          this.$refs.footer.style.bottom = '0px'
+          this.isShowUpload = !this.isShowUpload
+        }
+      },
+      display() {
+        this.$refs.footer.style.bottom = '0px'
+        this.isShowUpload = false
+        this.isShowEmoji = false
+        this.clear()
+      },
+      insertEmoji(index) {
+        let textarea = this.$refs.textarea
+        let cursorPos = textarea.selectionStart
+        let beforeText = this.message.substring(0, cursorPos)
+        let afterText = this.message.substring(cursorPos)
+        this.message = beforeText + this.emojis[index] + afterText
+      },
+      image(e) {
+         this.files = e.target.files
+        if(this.files.length != 0) {
+          this.isImage = true
+          this.isFile = false
+          this.$refs.file.value = ""
+        }
+      },
+      file(e) {
+        this.files = e.target.files
+        if(this.files.length != 0) {
+          this.isFile = true
+          this.isImage = false
+          this.$refs.image.value = ""
+        }
+      },
+      clear() {
+        this.isFile = false
+        this.isImage = false
+        this.$refs.image.value = ""
+        this.$refs.file.value = ""
       }
     }
   }
@@ -232,6 +335,7 @@
     width: 70%;
     height: 30px;
     font-size: 16px;
+    line-height: 30px;
     border: 1px solid rgba(194, 217, 240, 0.6);
     outline: none;
   }
@@ -242,6 +346,87 @@
     font-size: 25px;
     left: 20px;
     color: rgba(7,17,27,0.8);
+  }
+  .emoji-box {
+    display:  flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 180px;
+    background-color: rgb(255,255,255);
+    overflow: auto;
+    border-top: 1px solid rgba(194, 217, 240, 0.6);
+  }
+  .emoji {
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255,255,255);
+  }
+  .emoji-text {
+    text-align: center;
+    line-height: 48px;
+    font-size: 20px;
+  }
+  .upload-box {
+    display:  flex;
+    flex-wrap: wrap;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 180px;
+    background-color: rgb(255,255,255);
+    overflow: auto;
+    border-top: 1px solid rgba(194, 217, 240, 0.6);
+  }
+  .upload-picture {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid rgba(173, 173, 173, 0.6);
+    text-align: center;
+  }
+  .image {
+    position: absolute;
+    left: 0px;
+    height: 60px;
+    width: 56px;
+    opacity: 0;
+  }
+  .upload-file {
+    position: relative;
+    top: 20px;
+    left: 40px;
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid rgba(173, 173, 173, 0.6);
+    text-align: center;
+  }
+  .file {
+    position: absolute;
+    left: 0px;
+    height: 60px;
+    width: 56px;
+    opacity: 0;
+  }
+  .highlight {
+    color: rgb(52,152,219);
+  }
+  .icon-pic-pos {
+    line-height: 60px;
+    font-size: 24px;
+  }
+  .icon-file-pos {
+    line-height: 60px;
+    font-size: 24px;
+  }
+  .icon-envelope {
+    color: rgb(52,152,219);
   }
   .display-enter-active, .display-active-active {
     opacity: 1;
