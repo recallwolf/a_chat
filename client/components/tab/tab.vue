@@ -22,12 +22,12 @@
 
 <style scoped>
   .header {
-    position: absolute;
+    position: fixed;
     display: flex;
     top: 0px;
     width: 100%;
     height: 60px;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(0, 0, 0);
     border-top: 1px solid rgba(7,17,27,0.1);
   }
   .title {
@@ -48,7 +48,7 @@
     text-align: right;
   }
   .footer {
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     width: 100%;
     height: 55px;

@@ -2,19 +2,20 @@
   <transition name="slide">
     <div class="chatroom">
       <div class="headers">
-        <span v-on:click="back" class="icon-pos icon-back"></span>
+        <span v-on:click="back" class="icon-back-pos icon-back"></span>
+        <span class="icon-avatar-pos icon-avatar"></span>
       </div>
       <scroll ref="scroll" class="msg-box">
         <div>
           <div v-for="(message,index) in chatmsgs" v-bind:key="index" class="wrapper">
-            <div v-bind:class="{'msg-layout-other': message.user==='robot', 'msg-layout': message.user!='robot'}">
-              <div v-bind:class="{'pic-pos-other': message.user==='robot', 'pic-pos': message.user!='robot'}">
-                <img src="~common/image/avatar.jpg" class="pic" v-show="message.user!='robot'">
+            <div v-bind:class="{'msg-layout-other': message.user==='robot' || message.user!=userinfo.username, 'msg-layout': message.user!='robot' && message.user===userinfo.username}">
+              <div v-bind:class="{'pic-pos-other': message.user==='robot' || message.user!=userinfo.username, 'pic-pos': message.user!='robot' && message.user===userinfo.username}">
+                <img v-bind:src="message.avatar" class="pic" v-show="message.user!='robot'">
                 <img src="~common/image/cat.png" class="pic" v-show="message.user==='robot'">
               </div>
-              <div v-bind:class="{'text-pos-other': message.user==='robot', 'text-pos': message.user!='robot'}">
-                <p v-bind:class="{'text-user-other': message.user==='robot', 'text-user': message.user!='robot'}">{{message.user}}</p>
-                <div v-bind:class="{'text-box-other': message.user==='robot', 'text-box': message.user!='robot'}">
+              <div class="text-pos">
+                <p v-bind:class="{'text-user-other': message.user==='robot' || message.user!=userinfo.username, 'text-user': message.user!='robot' && message.user===userinfo.username}">{{message.user}}</p>
+                <div v-bind:class="{'text-box-other': message.user==='robot' || message.user!=userinfo.username, 'text-box': message.user!='robot' && message.user===userinfo.username}">
                   <p class="text-msg" v-html="message.msg"></p>
                 </div>
               </div>
@@ -66,8 +67,14 @@
   import {robot} from 'api/robot'
   import Scroll from 'base/scroll/scroll'
   import io from 'socket.io-client'
+  import {mapGetters} from 'vuex'
   let socket = {}
   export default {
+    computed: {
+      ...mapGetters([
+        'userinfo'
+      ])
+    },
     props: {
       id: {
         type: String
@@ -84,11 +91,14 @@
         isShowUpload: false,
         isFile: false,
         isImage: false,
+        username: '',
         emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️'],
       }
     },
     created() {
-      socket = io(`http://localhost:3000?roomid=${this.id}`)
+      socket = io(`http://localhost:3000?roomid=${this.id}`),
+      this.username = this.userinfo.username
+      this.avatar = this.userinfo.avatar
     },
     watch: {
       chatmsgs() {
@@ -114,29 +124,31 @@
       send() {
         if (this.message != "" && !this.isFile && !this.isImage ) {
           if (parseInt(this.id) === 0) {
-            this.chatmsgs.push({user: 'jack', msg: this.message})
+            this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
             robot(this.message).then((robotSay) => {
               this.chatmsgs.push({user: 'robot', msg: robotSay.results[0].values.text})
             })
           }
           else {
-            this.chatmsgs.push({user: 'jack', msg: this.message})
-            socket.emit('chat message', {user: 'jack', msg: this.message})
+            this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
+            socket.emit('chat message', {user: this.username, msg: this.message, avatar: this.avatar})
           }
           this.message = ""
         }
         else if (this.isFile) {
           if (this.files.length != 0) {
-            let tag = `<a href="http://localhost:3000/${this.files[0].name}" download="http://localhost:3000/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
-            this.chatmsgs.push({user: 'jack', msg: tag})
-            socket.emit('send file', {user: 'jack', msg: tag, file: this.files[0], filename: this.files[0].name})
+            let tag = `<a href="http://localhost:3000/upload/${this.files[0].name}" download="http://localhost:3000/upload/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
+            this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+            socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
           }
         }
         else if (this.isImage) {
           if (this.files.length != 0) {
-            let tag = `<img src="http://localhost:3000/${this.files[0].name}" width="120px" height="120px">`
-            this.chatmsgs.push({user: 'jack', msg: tag})
-            socket.emit('send file', {user: 'jack', msg: tag, file: this.files[0], filename: this.files[0].name})
+            let tag = `<img src="http://localhost:3000/upload/${this.files[0].name}" width="120px" height="120px">`
+            setTimeout( () => {
+                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+              }, 500)
+            socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
           }
         }
       },
@@ -208,7 +220,6 @@
 <style scoped>
   .chatroom {
     position: fixed;
-    z-index: 100;
     top: 0;
     left: 0;
     bottom: 0;
@@ -224,16 +235,28 @@
     background-color: rgba(0, 0, 0, 0.8);
     border-top: 1px solid rgba(7,17,27,0.1);
   }
-  .icon-pos {
+  .icon-back-pos {
     color: rgb(255,255,255);
     font-size: 20px;
     font-weight: bold;
     line-height: 55px;
     margin-left: 10px;
   }
+  .icon-avatar-pos {
+    position: absolute;
+    right: 25px;
+    color: rgb(255,255,255);
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 55px;
+  }
   .msg-box {
-    margin-top: 70px;
-    height: 80%;
+    position: fixed;
+    top: 58px;
+    left: 0;
+    bottom: 58px;
+    right: 0;
+    background-color: rgb(255,255,255);
     overflow: hidden;
   }
   .wrapper {
@@ -242,14 +265,17 @@
     align-items: flex-start;
   }
   .msg-layout {
+    margin-top: 10px;
     margin-bottom: 25px;
   }
   .msg-layout-other {
+    margin-top: 10px;
     margin-bottom: 35px;
     align-self: flex-end;
   }
   .pic-pos {
     display: inline-block;
+    vertical-align: top;
     width: 45px;
     height: 45px;
     position: relative;
@@ -270,29 +296,30 @@
   .text-pos {
     display: inline-block;
     vertical-align: top;
-    position: relative;
-    left: 20px;
-    top: 5px;
-  }
-  .text-pos-other {
-    float: right;
-    position: relative;
-    right: 20px;
-    top: 5px;
   }
   .text-user {
+    position: relative;
+    top: 5px;
+    left: 20px;
     font-size: 13px;
     color: rgba(7,17,27,0.7);
   }
   .text-user-other {
     float: right;
+    width: 100px;
+    text-align: right;
+    position: relative;
+    top: 5px;
+    right: 25px;
     font-size: 13px;
     color: rgba(7,17,27,0.7);
   }
   .text-box {
+    display: block;
     position: relative;
-    top: 6px;
-    max-width: 230px;
+    left: 20px;
+    top: 15px;
+    max-width: 200px;
     background-color: rgb(220, 220, 220);
     padding: 8px;
     border-radius: 8px;
@@ -302,16 +329,25 @@
   }
   .text-box-other {
     float: right;
+    display: block;
     position: relative;
-    top: 20px;
-    left: 35px;
-    max-width: 230px;
+    top: 25px;
+    left: 80px;
+    max-width: 200px;
     background-color: rgb(220, 220, 220);
     padding: 8px;
     border-radius: 8px;
     white-space: normal;
     word-break: break-all;
     overflow: hidden;
+  }
+  @media screen and (max-width: 320px) {
+    .text-box {
+      max-width: 155px;
+    }
+    .text-box-other {
+      max-width: 155px;
+    }
   }
   .text-msg {
     line-height: 23px;

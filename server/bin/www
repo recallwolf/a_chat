@@ -33,7 +33,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('send file', function(msg) {
-    var rawPath = '../public/' + msg.filename
+    var rawPath = '../public/upload/' + msg.filename
     var filePath = path.resolve(__dirname, rawPath)
     fs.writeFileSync(filePath, msg.file, 'binary')
     socket.broadcast.to(roomid).emit('chat message', msg)

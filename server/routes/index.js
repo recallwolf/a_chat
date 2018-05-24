@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios')
 
+const userData = [
+  {username: 'recallwolf', email: '9900@qq.com', password: '123456', avatar: 'avatar/panda.jpg'},
+  {username: 'recalldoge', email: '8848@qq.com', password: '123456', avatar: 'avatar/cat.jpg'}
+]
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
@@ -26,5 +31,16 @@ router.get('/api/robot', function(req, res) {
 	  console.log(response)
 	})
 });
+
+router.post('/api/login', function(req, res){
+  let username = req.body.username
+  let password = req.body.password
+  let user = userData.find((value) => {
+    return value.username === username
+  })
+  if (user != undefined && user.password === password) {
+    res.json(user)
+  }
+})
 
 module.exports = router;

@@ -1,45 +1,48 @@
 <template>
   <div>
-		<tab></tab>
-		<div class="chat">
-			<div class="chat-list" v-on:click="toRobot">
-				<div class="chat-pic">
-					<img src="~common/image/cat.png" height="55px" width="55px">
+	<tab></tab>
+		<scroll class="chat">
+			<div>
+				<div class="chat-list" v-on:click="toRobot">
+					<div class="chat-pic">
+						<img src="~common/image/cat.png" height="55px" width="55px">
+					</div>
+					<div class="chat-pos">
+						<h1 class="chat-name">图灵机器人</h1>
+						<p class="chat-desc">有事找我</p>
+					</div>
 				</div>
-				<div class="chat-pos">
-					<h1 class="chat-name">图灵机器人</h1>
-					<p class="chat-desc">有事找我</p>
-				</div>
-			</div>
 
-			<div class="chat-list" v-on:click="toChatroom(1)">
-				<div class="chat-pic">
-					<img src="~common/image/avatar.jpg" height="55px" width="55px">
+				<div class="chat-list" v-on:click="toChatroom(1)">
+					<div class="chat-pic">
+						<img src="~common/image/avatar.jpg" height="55px" width="55px">
+					</div>
+					<div class="chat-pos">
+						<h1 class="chat-name">聊天室1</h1>
+						<p class="chat-desc">说出你的故事</p>
+					</div>
 				</div>
-				<div class="chat-pos">
-					<h1 class="chat-name">聊天室1</h1>
-					<p class="chat-desc">说出你的故事</p>
-				</div>
-			</div>
 
-			<div class="chat-list" v-on:click="toChatroom(2)">
-				<div class="chat-pic">
-					<img src="~common/image/avatar.jpg" height="55px" width="55px">
+				<div class="chat-list" v-on:click="toChatroom(2)">
+					<div class="chat-pic">
+						<img src="~common/image/avatar.jpg" height="55px" width="55px">
+					</div>
+					<div class="chat-pos">
+						<h1 class="chat-name">聊天室2</h1>
+						<p class="chat-desc">说出你的故事</p>
+					</div>
 				</div>
-				<div class="chat-pos">
-					<h1 class="chat-name">聊天室2</h1>
-					<p class="chat-desc">说出你的故事</p>
-				</div>
-			</div>
 
-		</div>
-			<div class="new-chat" v-show="newChat">新建聊天室</div>
+				<div class="new-chat" v-show="newChat">新建聊天室</div>
+			</div>
+		</scroll>
 		<router-view/>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import Tab from 'components/tab/tab'
+	import Tab from 'components/tab/tab'
+	import Scroll from 'base/scroll/scroll'
   export default {
 		data() {
 			return {
@@ -62,7 +65,13 @@
 
 <style scoped>
   .chat {
-    margin-top: 61px;
+    position: fixed;
+    z-index: -1;
+    top: 58px;
+    left: 0;
+    bottom: 58px;
+    right: 0;
+    background-color: rgb(255,255,255);
   }
   .chat-list {
 		display: flex;
@@ -81,6 +90,7 @@
 	.chat-pos {
 		flex: 4;
 		margin-top: 20px;
+		margin-left: 10px;
 	}
   .chat-name {
 		margin-bottom: 10px;

@@ -2,9 +2,9 @@
   <div class="login">
 		<div class="headers"></div>
 		<h1 class="text">登录</h1>
-		<form class="form-pos" action="">
-			<input type="text" class="text-input">
-			<input type="text" class="text-input">
+		<form class="form-pos">
+			<input type="text" class="text-input" v-model="username">
+			<input type="password" class="text-input" v-model="password">
 			<input type="button" class="button-log" value="登录" v-on:click="toChat">
 			<input type="button" class="button-reg" value="注册" v-on:click="toRegsiter">
 		</form>
@@ -13,14 +13,33 @@
 </template>
 
 <script type="text/ecmascript-6">
+	import axios from 'axios'
+	import {mapMutations} from 'vuex'
 	export default {
+		data() {
+			return {
+				username: '',
+				password: ''
+			}
+		},
 		methods: {
 			toChat() {
-				this.$router.push('/chat')
+				if (this.username != '' && this.password != '' ) {
+					axios.post('/api/login',{
+						username: this.username,
+						password: this.password
+					}).then((response) => {
+						this.$router.push('/chat')
+						this.setUserinfo(response.data)
+					})
+				}
 			},
 			toRegsiter() {
 				this.$router.push('/register')
-			}
+			},
+			...mapMutations({
+				setUserinfo: 'SET_USERINFO'
+			})
 		}
 	}
 </script>
