@@ -15,7 +15,7 @@
 
 				<div class="chat-list" v-on:click="toChatroom(1)">
 					<div class="chat-pic">
-						<img src="~common/image/avatar.jpg" height="55px" width="55px">
+						<img src="~common/image/chatroom_1.jpg" height="55px" width="55px">
 					</div>
 					<div class="chat-pos">
 						<h1 class="chat-name">聊天室1</h1>
@@ -25,7 +25,7 @@
 
 				<div class="chat-list" v-on:click="toChatroom(2)">
 					<div class="chat-pic">
-						<img src="~common/image/avatar.jpg" height="55px" width="55px">
+						<img src="~common/image/chatroom_2.jpg" height="55px" width="55px">
 					</div>
 					<div class="chat-pos">
 						<h1 class="chat-name">聊天室2</h1>
@@ -43,11 +43,17 @@
 <script type="text/ecmascript-6">
 	import Tab from 'components/tab/tab'
 	import Scroll from 'base/scroll/scroll'
+	import {Mixin} from 'common/js/mixin'
   export default {
+		mixins: [Mixin],
 		data() {
 			return {
 				newChat : false
 			}
+		},
+		components: {
+			Tab,
+			Scroll
 		},
 		methods: {
 			toChatroom(index) {
@@ -56,10 +62,7 @@
 			toRobot() {
 				this.$router.push('/chat/robot/0')
 			}
-		},
-    components: {
-      Tab
-    }
+		}
   }
 </script>
 
@@ -124,5 +127,3 @@
 		transform: translateY(10px);
 	}
 </style>
-
-

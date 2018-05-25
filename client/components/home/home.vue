@@ -1,52 +1,50 @@
 <template>
   <div>
-  <tab></tab>
+    <tab></tab>
     <scroll class="home">
       <div>
-        <div class="function">
-          <div class="func-list">
-            <div class="func-pic">
-              <img src="~common/image/doc.png" height="32px" width="32px;">
-            </div>
-            <div class="func-text">
-              <p class="text">天气</p>
-            </div>
+        <div class="func-list">
+          <div class="func-pic">
+            <img src="~common/image/doc.png" height="32px" width="32px;">
           </div>
-
-          <div class="func-list">
-            <div class="func-pic">
-              <img src="~common/image/jpg.png" height="32px" width="32px;">
-            </div>
-            <div class="func-text">
-              <p class="text">车票</p>
-            </div>
+          <div class="func-text">
+            <p class="text">天气</p>
           </div>
+        </div>
 
-          <div class="func-list">
-            <div class="func-pic">
-              <img src="~common/image/html.png" height="32px" width="32px;">
-            </div>
-            <div class="func-text">
-              <p class="text">每日一图</p>
-            </div>
+        <div class="func-list">
+          <div class="func-pic">
+            <img src="~common/image/jpg.png" height="32px" width="32px;">
           </div>
-
-          <div class="func-list">
-            <div class="func-pic">
-              <img src="~common/image/pdf.png" height="32px" width="32px;">
-            </div>
-            <div class="func-text">
-              <p class="text">快递</p>
-            </div>
+          <div class="func-text">
+            <p class="text">车票</p>
           </div>
+        </div>
 
-          <div class="func-list">
-            <div class="func-pic">
-              <img src="~common/image/mp3.png" height="32px" width="32px;">
-            </div>
-            <div class="func-text">
-              <p class="text">新闻</p>
-            </div>
+        <div class="func-list">
+          <div class="func-pic">
+            <img src="~common/image/html.png" height="32px" width="32px;">
+          </div>
+          <div class="func-text">
+            <p class="text">每日一图</p>
+          </div>
+        </div>
+
+        <div class="func-list">
+          <div class="func-pic">
+            <img src="~common/image/pdf.png" height="32px" width="32px;">
+          </div>
+          <div class="func-text">
+            <p class="text">快递</p>
+          </div>
+        </div>
+
+        <div class="func-list">
+          <div class="func-pic">
+            <img src="~common/image/mp3.png" height="32px" width="32px;">
+          </div>
+          <div class="func-text">
+            <p class="text">新闻</p>
           </div>
         </div>
       </div>
@@ -57,7 +55,9 @@
 <script type="text/ecmascript-6">
   import Tab from 'components/tab/tab'
   import Scroll from 'base/scroll/scroll'
+  import {Mixin} from 'common/js/mixin'
   export default {
+    mixins: [Mixin],
     components: {
       Tab,
       Scroll

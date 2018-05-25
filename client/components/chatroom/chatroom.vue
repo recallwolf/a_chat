@@ -68,8 +68,10 @@
   import Scroll from 'base/scroll/scroll'
   import io from 'socket.io-client'
   import {mapGetters} from 'vuex'
+  import {Mixin} from 'common/js/mixin'
   let socket = {}
   export default {
+    mixins: [Mixin],
     computed: {
       ...mapGetters([
         'userinfo'
@@ -92,13 +94,12 @@
         isFile: false,
         isImage: false,
         username: '',
+        avatar: '',
         emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️'],
       }
     },
     created() {
-      socket = io(`http://localhost:3000?roomid=${this.id}`),
-      this.username = this.userinfo.username
-      this.avatar = this.userinfo.avatar
+      socket = io(`http://localhost:3000?roomid=${this.id}`)
     },
     watch: {
       chatmsgs() {
@@ -109,10 +110,12 @@
       }
     },
     mounted() {
-      var self = this
+      let self = this
       socket.on('chat message', function(msg){
         self.chatmsgs.push(msg)
       });
+      this.username = this.userinfo.username
+      this.avatar = this.userinfo.avatar
     },
     components: {
       Scroll
@@ -124,12 +127,14 @@
       send() {
         if (this.message != "" && !this.isFile && !this.isImage ) {
           if (parseInt(this.id) === 0) {
+            this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
             this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
-            robot(this.message).then((robotSay) => {
-              this.chatmsgs.push({user: 'robot', msg: robotSay.results[0].values.text})
+            robot(this.message).then((res) => {
+              this.chatmsgs.push({user: 'robot', msg: res.results[0].values.text})
             })
           }
           else {
+            this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
             this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
             socket.emit('chat message', {user: this.username, msg: this.message, avatar: this.avatar})
           }
@@ -244,7 +249,7 @@
   }
   .icon-avatar-pos {
     position: absolute;
-    right: 25px;
+    right: 15px;
     color: rgb(255,255,255);
     font-size: 20px;
     font-weight: bold;
