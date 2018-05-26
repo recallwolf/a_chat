@@ -1,75 +1,76 @@
 <template>
-  <transition name="slide">
-    <div class="chatroom">
-      <div class="headers">
-        <span v-on:click="back" class="icon-back-pos icon-back"></span>
-        <span class="icon-avatar-pos icon-avatar"></span>
-      </div>
-      <scroll ref="scroll" class="msg-box">
-        <div>
-          <div v-for="(message,index) in chatmsgs" v-bind:key="index" class="wrapper">
-            <div v-bind:class="{'msg-layout-other': message.user==='robot' || message.user!=userinfo.username, 'msg-layout': message.user!='robot' && message.user===userinfo.username}">
-              <div v-bind:class="{'pic-pos-other': message.user==='robot' || message.user!=userinfo.username, 'pic-pos': message.user!='robot' && message.user===userinfo.username}">
-                <img v-bind:src="message.avatar" class="pic" v-show="message.user!='robot'">
-                <img src="~common/image/cat.png" class="pic" v-show="message.user==='robot'">
-              </div>
-              <div class="text-pos">
-                <p v-bind:class="{'text-user-other': message.user==='robot' || message.user!=userinfo.username, 'text-user': message.user!='robot' && message.user===userinfo.username}">{{message.user}}</p>
-                <div v-bind:class="{'text-box-other': message.user==='robot' || message.user!=userinfo.username, 'text-box': message.user!='robot' && message.user===userinfo.username}">
-                  <p class="text-msg" v-html="message.msg"></p>
-                </div>
+  <div class="chatroom">
+    <div class="headers">
+      <span v-on:click="back" class="icon-back-pos icon-back"></span>
+      <span class="icon-avatar-pos icon-avatar" v-on:click="showMember"></span>
+    </div>
+    <scroll ref="scroll" class="msg-box">
+      <div>
+        <div v-for="(message,index) in chatmsgs" v-bind:key="index" class="wrapper">
+          <div v-bind:class="{'msg-layout-other': message.user==='robot' || message.user!=userinfo.username, 'msg-layout': message.user!='robot' && message.user===userinfo.username}">
+            <div v-bind:class="{'pic-pos-other': message.user==='robot' || message.user!=userinfo.username, 'pic-pos': message.user!='robot' && message.user===userinfo.username}">
+              <img v-on:click="showDetail(message.user)" v-bind:src="message.avatar" class="pic" v-show="message.user!='robot'">
+              <img src="~common/image/cat.png" class="pic" v-show="message.user==='robot'">
+            </div>
+            <div class="text-pos">
+              <p v-bind:class="{'text-user-other': message.user==='robot' || message.user!=userinfo.username, 'text-user': message.user!='robot' && message.user===userinfo.username}">{{message.user}}</p>
+              <div v-bind:class="{'text-box-other': message.user==='robot' || message.user!=userinfo.username, 'text-box': message.user!='robot' && message.user===userinfo.username}">
+                <p class="text-msg" v-html="message.msg"></p>
               </div>
             </div>
           </div>
         </div>
-      </scroll>
-      <div class="footer" ref="footer">
-        <textarea class="input" v-model="message" v-on:focus="display" ref="textarea"></textarea>
-        <div class="input-icon">
-          <transition name="display">
-            <span class="icon-happy" v-on:click="showEmoji" v-show="!(isImage||isFile)"></span>
-          </transition>
-           <transition name="display">
-            <span class="icon-error" v-show="isImage||isFile" v-on:click="clear"></span>
-          </transition>
-          <transition name="display">
-            <span class="icon-plus" v-show="!(message||isFile||isImage)" v-on:click="showUpload"></span>
-          </transition>
-          <transition name="display">
-            <span class="icon-envelope" v-show="message||isFile||isImage" v-on:click="send"></span>
-          </transition>
-        </div>
       </div>
-
-      <div class="emoji-box" v-show="isShowEmoji">
-        <div class="emoji" v-for="(emoji,index) in emojis" v-bind:key="index">
-          <p class="emoji-text" v-on:click="insertEmoji(index)">{{emoji}}</p>
-        </div>
-      </div>
-
-      <div class="upload-box" v-show="isShowUpload">
-        <div class="upload-picture">
-          <span class="icon-pic-pos icon-picture" v-bind:class="{'highlight': isImage}">
-            <input ref="image" type="file"  class="image" v-on:change="image" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
-          </span>
-        </div>
-        <div class="upload-file">
-          <span class="icon-file-pos icon-file" v-bind:class="{'highlight': isFile}">
-            <input ref="file" type="file" class="file" v-on:change="file">
-          </span>
-        </div>
+    </scroll>
+    <div class="footer" ref="footer">
+      <textarea class="input" v-model="message" v-on:focus="display" ref="textarea"></textarea>
+      <div class="input-icon">
+        <transition name="display">
+          <span class="icon-happy" v-on:click="showEmoji" v-show="!(isImage||isFile)"></span>
+        </transition>
+        <transition name="display">
+          <span class="icon-error" v-show="isImage||isFile" v-on:click="clear"></span>
+        </transition>
+        <transition name="display">
+          <span class="icon-plus" v-show="!(message||isFile||isImage)" v-on:click="showUpload"></span>
+        </transition>
+        <transition name="display">
+          <span class="icon-envelope" v-show="message||isFile||isImage" v-on:click="send"></span>
+        </transition>
       </div>
     </div>
-  </transition>
+
+    <div class="emoji-box" v-show="isShowEmoji">
+      <div class="emoji" v-for="(emoji,index) in emojis" v-bind:key="index">
+        <p class="emoji-text" v-on:click="insertEmoji(index)">{{emoji}}</p>
+      </div>
+    </div>
+
+    <div class="upload-box" v-show="isShowUpload">
+      <div class="upload-picture">
+        <span class="icon-pic-pos icon-picture" v-bind:class="{'highlight': isImage}">
+          <input ref="image" type="file"  class="image" v-on:change="image" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
+        </span>
+      </div>
+      <div class="upload-file">
+        <span class="icon-file-pos icon-file" v-bind:class="{'highlight': isFile}">
+          <input ref="file" type="file" class="file" v-on:change="file">
+        </span>
+      </div>
+    </div>
+    <transition name="slide">
+      <member v-show="isShowMember&&members!=''" v-on:close="showMember"  v-bind:members="members"></member>
+    </transition>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
   import {robot} from 'api/robot'
   import Scroll from 'base/scroll/scroll'
+  import Member from 'components/member/member'
   import io from 'socket.io-client'
   import {mapGetters} from 'vuex'
   import {Mixin} from 'common/js/mixin'
-  let socket = {}
   export default {
     mixins: [Mixin],
     computed: {
@@ -93,13 +94,16 @@
         isShowUpload: false,
         isFile: false,
         isImage: false,
+        isShowMember: false,
         username: '',
         avatar: '',
+        socket: {},
+        members: [],
         emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️'],
       }
     },
     created() {
-      socket = io(`http://localhost:3000?roomid=${this.id}`)
+      this.socket = io(`http://localhost:3000?roomid=${this.id}`)
     },
     watch: {
       chatmsgs() {
@@ -110,15 +114,21 @@
       }
     },
     mounted() {
-      let self = this
-      socket.on('chat message', function(msg){
+      let self = this   //socket.on会改变this的指向！！！
+      this.socket.on('chat message', function(msg){
         self.chatmsgs.push(msg)
       });
       this.username = this.userinfo.username
       this.avatar = this.userinfo.avatar
+      this.socket.emit('join', {username: this.username, avatar: this.avatar})
+      this.socket.emit('onlineUser', parseInt(this.id))
+      this.socket.on('onlineUser', function(members) {
+        self.members = members
+      })
     },
     components: {
-      Scroll
+      Scroll,
+      Member
     },
     methods: {
       back() {
@@ -136,7 +146,7 @@
           else {
             this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
             this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
-            socket.emit('chat message', {user: this.username, msg: this.message, avatar: this.avatar})
+            this.socket.emit('chat message', {user: this.username, msg: this.message, avatar: this.avatar})
           }
           this.message = ""
         }
@@ -144,7 +154,7 @@
           if (this.files.length != 0) {
             let tag = `<a href="http://localhost:3000/upload/${this.files[0].name}" download="http://localhost:3000/upload/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
             this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
-            socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+            this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
           }
         }
         else if (this.isImage) {
@@ -153,9 +163,17 @@
             setTimeout( () => {
                 this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
               }, 500)
-            socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+            this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
           }
         }
+      },
+      showDetail(username) {
+        this.$router.push({
+          path: '/setting',
+          query: {
+            username: username
+          }
+        })
       },
       showEmoji() {
         if (!this.isShowEmoji) {
@@ -182,6 +200,9 @@
           this.$refs.footer.style.bottom = '0px'
           this.isShowUpload = !this.isShowUpload
         }
+      },
+      showMember() {
+        this.isShowMember = !this.isShowMember
       },
       display() {
         this.$refs.footer.style.bottom = '0px'
@@ -225,6 +246,7 @@
 <style scoped>
   .chatroom {
     position: fixed;
+    z-index: 1;
     top: 0;
     left: 0;
     bottom: 0;

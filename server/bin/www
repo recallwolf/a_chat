@@ -24,9 +24,20 @@ var io = require('socket.io')(server);
 var fs = require('fs');
 var path = require('path')
 
+var room1 = []
+var room2 = []
+
 io.on('connection', function(socket){
   var roomid = socket.handshake.query.roomid
   socket.join(roomid)
+  socket.on('join', function(msg) {
+    if (parseInt(roomid) === 1) {
+      room1.push({username: msg.username, avatar: msg.avatar, id: socket.id})
+    }
+    else if (parseInt(roomid) === 2) {
+      room2.push({username: msg.username, avatar: msg.avatar, id: socket.id})
+    }
+  })
 
 	socket.on('chat message', function(msg){
     socket.broadcast.to(roomid).emit('chat message', msg)
@@ -37,6 +48,15 @@ io.on('connection', function(socket){
     var filePath = path.resolve(__dirname, rawPath)
     fs.writeFileSync(filePath, msg.file, 'binary')
     socket.broadcast.to(roomid).emit('chat message', msg)
+  })
+
+  socket.on('onlineUser', function(room) {
+    if (room === 1) {
+      socket.emit('onlineUser', room1)
+    }
+    else if (room === 2) {
+      socket.emit('onlineUser', room2)
+    }
   })
 })
 /**

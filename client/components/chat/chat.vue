@@ -36,7 +36,9 @@
 				<div class="new-chat" v-show="newChat">新建聊天室</div>
 			</div>
 		</scroll>
-		<router-view/>
+		<transition name="slide">
+			<router-view/>
+		</transition>
   </div>
 </template>
 
@@ -126,4 +128,10 @@
 		opacity: 0;
 		transform: translateY(10px);
 	}
+	.slide-enter-active, .slide-leave-active {
+    transition: all 0.3s;
+  }
+  .slide-enter, .slide-leave-to {
+    transform: translate3d(100%, 0, 0);
+  }
 </style>

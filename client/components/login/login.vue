@@ -56,7 +56,6 @@
 					axios.post('/api/check', {
 						token: info.token
 					}).then((res) => {
-						//console.log(res.data)
 						if (res.data === 'success') {
 							this.$router.push('/chat')
 						}

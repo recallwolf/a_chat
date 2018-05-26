@@ -8,21 +8,27 @@
         </div>
         <div class="modal"></div>
         <div class="avatar">
-          <img v-bind:src="userinfo.avatar" class="avtar-img">
+          <img v-bind:src="data.avatar" class="avtar-img">
         </div>
         <div>
           <div class="part">
             <p class="title">账号</p>
-            <p class="content">{{userinfo.username}}</p>
+            <p class="content">{{data.username}}</p>
           </div>
 
           <div class="part">
             <p class="title">邮箱</p>
-            <p class="content">{{userinfo.email}}</p>
+            <p class="content">{{data.email}}</p>
           </div>
 
-          <div class="logout" v-on:click="logout">
+          <div class="logout" v-on:click="logout" v-show="!$route.query.username">
             <p class="logout-text">一键注销</p>
+          </div>
+          <div class="send"  v-show="$route.query.username && $route.query.username != userinfo.username">
+            <p class="logout-text">发消息</p>
+          </div>
+          <div class="return"  v-on:click="back" v-show="$route.query.username && $route.query.username != userinfo.username">
+            <p class="logout-text">返回聊天室</p>
           </div>
         </div>
       </div>
@@ -35,8 +41,20 @@
   import {mapGetters} from 'vuex'
   import Scroll from 'base/scroll/scroll'
   import {Mixin} from 'common/js/mixin'
+  import axios from 'axios'
   export default {
     mixins: [Mixin],
+    data() {
+      return {
+        data: {}
+      }
+    },
+    mounted() {
+      this.getUserinfo()
+    },
+    activated() {
+      this.getUserinfo()
+    },   
     computed: {
        ...mapGetters([
         'userinfo'
@@ -47,9 +65,21 @@
       Scroll
     },
     methods: {
+      getUserinfo() {
+        axios('/api/userinfo', {
+          params: {
+            username: this.$route.query.username || this.userinfo.username
+          }
+        }).then((res) => {
+          this.data = res.data
+        })
+      },
       logout() {
         localStorage.removeItem('userinfo')
         this.$router.push('/login')
+      },
+      back() {
+        this.$router.back()
       }
     }
   }
@@ -125,12 +155,25 @@
     height: 50px;
     width: 100%;
     background-color:rgba(3, 12, 20, 0.6);
-
   }
   .logout-text {
     line-height: 50px;
     text-align: center;
     font-size: 20px;
     color: rgba(255,255,255,0.9);
+  }
+  .send {
+    position: relative;
+    top: -10px;
+    height: 50px;
+    width: 100%;
+    background-color:rgb(64,158,255);
+  }
+  .return {
+    position: relative;
+    top: -9px;
+    height: 50px;
+    width: 100%;
+    background-color:rgb(64,158,255);
   }
 </style>

@@ -40,20 +40,32 @@ router.post('/api/login', function(req, res){
   let user = userData.find((value) => {
     return value.username === username
   })
+  let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
   if (user != undefined && user.password === password) {
     token = jwt.sign(req.body, 'user_pass_word', {expiresIn: 60*60*24*7})
-    user.token = token
-    res.json(user)
+    userinfo.token = token
+    res.json(userinfo)
   }
 })
 
-router.post('/api/check',function(req, res) {
+router.post('/api/check', function(req, res) {
   let frontEndToken = req.body.token
   if (frontEndToken != token) {
     res.send('fail')
   }
   else {
     res.send('success')
+  }
+})
+
+router.get('/api/userinfo', function(req, res) {
+  let username = req.query.username
+  let user = userData.find((value) => {
+    return value.username === username
+  })
+  if (user != undefined) {
+    let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
+    res.json(userinfo)
   }
 })
 

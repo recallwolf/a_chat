@@ -18,7 +18,7 @@ export const Mixin = {
         axios.post('/api/check', {
           token: info.token
         }).then((res) => {
-          if (res.data === 500) {
+          if (res.data === 'fail') {
             this.$router.push('/login')
           }
         })
