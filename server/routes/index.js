@@ -8,7 +8,6 @@ const userData = [
   {username: 'recalldoge', email: '8848@qq.com', password: '123456', avatar: 'avatar/cat.jpg'}
 ]
 
-let token
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
@@ -43,6 +42,7 @@ router.post('/api/login', function(req, res){
   let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
   if (user != undefined && user.password === password) {
     token = jwt.sign(req.body, 'user_pass_word', {expiresIn: 60*60*24*7})
+    user.token = token
     userinfo.token = token
     res.json(userinfo)
   }
@@ -50,7 +50,11 @@ router.post('/api/login', function(req, res){
 
 router.post('/api/check', function(req, res) {
   let frontEndToken = req.body.token
-  if (frontEndToken != token) {
+  let username = req.body.username
+  let user = userData.find((value) => {
+    return value.username === username
+  })
+  if (frontEndToken != user.token) {
     res.send('fail')
   }
   else {

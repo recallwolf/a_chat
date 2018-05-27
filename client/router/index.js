@@ -33,11 +33,13 @@ export default new Router({
       children: [
         {
           path: 'chatroom/:id',
+          name: 'Chatroom',
           component: Chatroom,
           props: true
         },
         {
           path: 'robot/:id',
+          name: 'Robot',
           component: Chatroom,
           props: true
         }
@@ -52,6 +54,12 @@ export default new Router({
       path: '/setting',
       name: 'Setting',
       component: Setting
+    },
+    {
+      path: '/private/:id',
+      name: 'Private',
+      component: Chatroom,
+      props: true
     }
   ]
 })

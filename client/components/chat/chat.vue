@@ -32,8 +32,6 @@
 						<p class="chat-desc">说出你的故事</p>
 					</div>
 				</div>
-
-				<div class="new-chat" v-show="newChat">新建聊天室</div>
 			</div>
 		</scroll>
 		<transition name="slide">
@@ -46,12 +44,18 @@
 	import Tab from 'components/tab/tab'
 	import Scroll from 'base/scroll/scroll'
 	import {Mixin} from 'common/js/mixin'
+	import io from 'socket.io-client'
+	import {mapGetters, mapMutations} from 'vuex'
   export default {
 		mixins: [Mixin],
 		data() {
 			return {
 				newChat : false
 			}
+		},
+		created() {
+			this.socket = io('http://localhost:3000')
+			this.setSocket(this.socket)
 		},
 		components: {
 			Tab,
@@ -63,7 +67,10 @@
 			},
 			toRobot() {
 				this.$router.push('/chat/robot/0')
-			}
+			},
+			...mapMutations({
+      	setSocket: 'SET_SOCKET'
+    	})
 		}
   }
 </script>
@@ -106,19 +113,6 @@
 		position: relative;
 		color: rgba(7,17,27,0.9);
 		font-size: 12px;
-	}
-	.new-chat {
-		position: absolute;
-		right: 0px;
-		top:61px;
-		width: 130px;
-		height: 40px;
-		background-color: rgb(250, 250, 250);
-		border-radius: 1px;
-		font-size: 18px;
-		color: #444;
-		text-align: center;
-		line-height: 40px;
 	}
 	.fade-enter-active, .fade-leave-active {
 		transition: all 0.3s;

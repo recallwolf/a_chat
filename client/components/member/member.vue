@@ -5,8 +5,8 @@
     </div>
     <div class="content">
       <div class="userinfo" v-for="(member, index) in members" v-bind:key="index">
-        <div class="user-pic">
-          <img v-bind:src="member.avatar" width="50px" height="50px">
+        <div class="user-pic" v-on:click="showDetail(member.username)">
+          <img v-bind:src="member.avatar" class="avatar">
         </div>
         <p class="username">{{member.username}}</p>
       </div>
@@ -21,14 +21,33 @@
       roomid: {
         type: String
       },
-      members: {
-        type: Array
+      socket: {
+        type: Object
       }
+    },
+    data() {
+      return {
+        members: []
+      }
+    },
+    mounted() {
+      let self = this
+      this.socket.on('onlineUser', function(members) {
+        self.members = members
+      })
     },
     methods: {
       back() {
         this.$emit('close')
-      }
+      },
+      showDetail(username) {
+        this.$router.push({
+          path: '/setting',
+          query: {
+            username: username
+          }
+        })
+      },
     }
   }
 </script>
@@ -68,18 +87,25 @@
     background-color:rgb(255,255,255);
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 5px;
   }
   .userinfo {
     position: relative;
     top: 15px;
-    bottom: 0;
     width: 20%;
     height: 90px;
+    margin-bottom: -5px;
   }
   .user-pic {
     margin: 0 auto;
     width: 50px;
     height: 50px;
+    border-radius: 50%;
+  }
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
   }
   .username {
     margin: 0 auto;

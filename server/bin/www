@@ -29,13 +29,52 @@ var room2 = []
 
 io.on('connection', function(socket){
   var roomid = socket.handshake.query.roomid
-  socket.join(roomid)
+
+  if (roomid) {
+    socket.join(roomid)
+  }
+
   socket.on('join', function(msg) {
     if (parseInt(roomid) === 1) {
+      var index = room1.findIndex((value) => {
+        return value.username === msg.username
+      })
+      if (index > -1) {
+        room1.splice(index, 1)
+      }
       room1.push({username: msg.username, avatar: msg.avatar, id: socket.id})
+      io.to(roomid).emit('onlineUser', room1)
     }
     else if (parseInt(roomid) === 2) {
+      var index = room2.findIndex((value) => {
+        return value.username === msg.username
+      })
+      if (index > -1) {
+        room2.splice(index, 1)
+      }
       room2.push({username: msg.username, avatar: msg.avatar, id: socket.id})
+      io.to(roomid).emit('onlineUser', room2)
+    }
+  })
+  
+  socket.on('leave', function(msg) {
+    if (parseInt(roomid) === 1) {
+      var index = room1.findIndex((value) => {
+        return value.username === msg.username
+      })
+      if (index > -1) {
+        room1.splice(index, 1)
+      }
+      io.to(roomid).emit('onlineUser', room1)
+    }
+    else if (parseInt(roomid) === 2) {
+      var index = room2.findIndex((value) => {
+        return value.username === msg.username
+      })
+      if (index > -1) {
+        room2.splice(index, 1)
+      }
+      io.to(roomid).emit('onlineUser', room2)
     }
   })
 
@@ -47,11 +86,13 @@ io.on('connection', function(socket){
     var rawPath = '../public/upload/' + msg.filename
     var filePath = path.resolve(__dirname, rawPath)
     fs.writeFileSync(filePath, msg.file, 'binary')
+    socket.emit('send successful')
     socket.broadcast.to(roomid).emit('chat message', msg)
   })
 
   socket.on('onlineUser', function(room) {
     if (room === 1) {
+      console.log(room1)
       socket.emit('onlineUser', room1)
     }
     else if (room === 2) {

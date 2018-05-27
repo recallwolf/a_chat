@@ -16,6 +16,7 @@ export const Mixin = {
       let info = JSON.parse(localStorage.getItem('userinfo'))
       if (info != null) {
         axios.post('/api/check', {
+          username: info.username,
           token: info.token
         }).then((res) => {
           if (res.data === 'fail') {

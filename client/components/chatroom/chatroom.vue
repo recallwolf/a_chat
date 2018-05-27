@@ -2,7 +2,7 @@
   <div class="chatroom">
     <div class="headers">
       <span v-on:click="back" class="icon-back-pos icon-back"></span>
-      <span class="icon-avatar-pos icon-avatar" v-on:click="showMember"></span>
+      <span class="icon-avatar-pos icon-avatar" v-show="parseInt(id) === 1 || parseInt(id) === 2" v-on:click="showMember"></span>
     </div>
     <scroll ref="scroll" class="msg-box">
       <div>
@@ -59,7 +59,7 @@
       </div>
     </div>
     <transition name="slide">
-      <member v-show="isShowMember&&members!=''" v-on:close="showMember"  v-bind:members="members"></member>
+      <member v-show="isShowMember" v-on:close="showMember"  v-bind:roomid="id" v-bind:socket="socket"></member>
     </transition>
   </div>
 </template>
@@ -69,7 +69,7 @@
   import Scroll from 'base/scroll/scroll'
   import Member from 'components/member/member'
   import io from 'socket.io-client'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
   import {Mixin} from 'common/js/mixin'
   export default {
     mixins: [Mixin],
@@ -80,9 +80,6 @@
     },
     props: {
       id: {
-        type: String
-      },
-      room: {
         type: String
       }
     },
@@ -98,7 +95,6 @@
         username: '',
         avatar: '',
         socket: {},
-        members: [],
         emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️'],
       }
     },
@@ -115,15 +111,11 @@
     },
     mounted() {
       let self = this   //socket.on会改变this的指向！！！
-      this.socket.on('chat message', function(msg){
-        self.chatmsgs.push(msg)
-      });
       this.username = this.userinfo.username
       this.avatar = this.userinfo.avatar
       this.socket.emit('join', {username: this.username, avatar: this.avatar})
-      this.socket.emit('onlineUser', parseInt(this.id))
-      this.socket.on('onlineUser', function(members) {
-        self.members = members
+      this.socket.on('chat message', function(msg){
+        self.chatmsgs.push(msg)
       })
     },
     components: {
@@ -132,7 +124,8 @@
     },
     methods: {
       back() {
-        this.$router.push('/chat')
+        this.$router.back()
+        this.socket.emit('leave', {username: this.username, avatar: this.avatar})
       },
       send() {
         if (this.message != "" && !this.isFile && !this.isImage ) {
@@ -153,17 +146,19 @@
         else if (this.isFile) {
           if (this.files.length != 0) {
             let tag = `<a href="http://localhost:3000/upload/${this.files[0].name}" download="http://localhost:3000/upload/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
-            this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
             this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+            this.socket.on('send successful', () => {
+              this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+            })
           }
         }
         else if (this.isImage) {
           if (this.files.length != 0) {
             let tag = `<img src="http://localhost:3000/upload/${this.files[0].name}" width="120px" height="120px">`
-            setTimeout( () => {
-                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
-              }, 500)
             this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+            this.socket.on('send successful', () => {
+              this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+            })
           }
         }
       },

@@ -24,11 +24,11 @@
           <div class="logout" v-on:click="logout" v-show="!$route.query.username">
             <p class="logout-text">一键注销</p>
           </div>
-          <div class="send"  v-show="$route.query.username && $route.query.username != userinfo.username">
+          <div class="send" v-show="$route.query.username && $route.query.username != userinfo.username">
             <p class="logout-text">发消息</p>
           </div>
-          <div class="return"  v-on:click="back" v-show="$route.query.username && $route.query.username != userinfo.username">
-            <p class="logout-text">返回聊天室</p>
+          <div class="return" v-on:click="back" v-show="$route.query.username">
+            <p class="logout-text">返回</p>
           </div>
         </div>
       </div>
