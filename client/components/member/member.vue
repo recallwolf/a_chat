@@ -88,6 +88,7 @@
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 5px;
+    overflow: auto;
   }
   .userinfo {
     position: relative;

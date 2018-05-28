@@ -45,17 +45,12 @@
 	import Scroll from 'base/scroll/scroll'
 	import {Mixin} from 'common/js/mixin'
 	import io from 'socket.io-client'
-	import {mapGetters, mapMutations} from 'vuex'
   export default {
 		mixins: [Mixin],
 		data() {
 			return {
 				newChat : false
 			}
-		},
-		created() {
-			this.socket = io('http://localhost:3000')
-			this.setSocket(this.socket)
 		},
 		components: {
 			Tab,
@@ -67,10 +62,7 @@
 			},
 			toRobot() {
 				this.$router.push('/chat/robot/0')
-			},
-			...mapMutations({
-      	setSocket: 'SET_SOCKET'
-    	})
+			}
 		}
   }
 </script>

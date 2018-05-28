@@ -7,7 +7,7 @@
           <div class="func-pic">
             <img src="~common/image/doc.png" height="32px" width="32px;">
           </div>
-          <div class="func-text">
+          <div class="func-text" v-on:click="toWeather">
             <p class="text">天气</p>
           </div>
         </div>
@@ -49,6 +49,9 @@
         </div>
       </div>
     </scroll>
+    <transition name="slide">
+      <router-view/>
+    </transition>
   </div>
 </template>
 
@@ -61,6 +64,11 @@
     components: {
       Tab,
       Scroll
+    },
+    methods: {
+      toWeather() {
+        this.$router.push('home/weather')
+      }
     }
   }
 </script>
@@ -92,5 +100,11 @@
   .text {
     line-height: 60px;
     font-size: 18px;
+  }
+  .slide-enter-active, .slide-leave-active {
+    transition: all 0.3s;
+  }
+  .slide-enter, .slide-leave-to {
+    transform: translate3d(100%, 0, 0);
   }
 </style>

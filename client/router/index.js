@@ -6,6 +6,7 @@ import Setting from 'components/setting/setting'
 import Chatroom from 'components/chatroom/chatroom'
 import Login from 'components/login/login'
 import Regsiter from 'components/register/register'
+import Weather from 'components/weather/weather'
 
 Vue.use(Router)
 
@@ -48,7 +49,14 @@ export default new Router({
     {
       path: '/home',
       name: 'Home',
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: 'weather',
+          name: 'Weather',
+          component: Weather
+        }
+      ]
     },
     {
       path: '/setting',

@@ -99,7 +99,32 @@ io.on('connection', function(socket){
       socket.emit('onlineUser', room2)
     }
   })
+
+  socket.on('private', function(msg) {
+    let room = room1.concat(room2)
+    var val = room.find((value) => {
+      return value.username === msg.toUser
+    })
+    if (val != undefined) {
+      socket.broadcast.to(val.id).emit('private', msg)
+    }
+  })
+
+  socket.on('private file', function(msg) {
+    let room = room1.concat(room2)
+    var val = room.find((value) => {
+      return value.username === msg.toUser
+    })
+    if (val != undefined) {
+      var rawPath = '../public/upload/' + msg.filename
+      var filePath = path.resolve(__dirname, rawPath)
+      fs.writeFileSync(filePath, msg.file, 'binary')
+      socket.emit('private file successful')
+      socket.broadcast.to(val.id).emit('private', msg)
+    }
+  })
 })
+
 /**
  * Listen on provided port, on all network interfaces.
  */

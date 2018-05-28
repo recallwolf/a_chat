@@ -1,7 +1,5 @@
 const state = {
-  userinfo: {},
-  socket: {},
-  chats: []
+  userinfo: {}
 }
 
 export default state

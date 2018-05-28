@@ -24,7 +24,7 @@
           <div class="logout" v-on:click="logout" v-show="!$route.query.username">
             <p class="logout-text">一键注销</p>
           </div>
-          <div class="send" v-show="$route.query.username && $route.query.username != userinfo.username">
+          <div class="send" v-on:click="toUser(data.username)" v-show="$route.query.username && $route.query.username != userinfo.username">
             <p class="logout-text">发消息</p>
           </div>
           <div class="return" v-on:click="back" v-show="$route.query.username">
@@ -54,7 +54,7 @@
     },
     activated() {
       this.getUserinfo()
-    },   
+    },
     computed: {
        ...mapGetters([
         'userinfo'
@@ -66,13 +66,17 @@
     },
     methods: {
       getUserinfo() {
-        axios('/api/userinfo', {
-          params: {
-            username: this.$route.query.username || this.userinfo.username
-          }
-        }).then((res) => {
-          this.data = res.data
-        })
+        if (this.$route.query.username != undefined)
+          axios('/api/userinfo', {
+            params: {
+              username: this.$route.query.username || this.userinfo.username
+            }
+          }).then((res) => {
+            this.data = res.data
+          })
+        else {
+          this.data = this.userinfo
+        }
       },
       logout() {
         localStorage.removeItem('userinfo')
@@ -80,6 +84,9 @@
       },
       back() {
         this.$router.back()
+      },
+      toUser(username) {
+        this.$router.push(`/private/${username}`)
       }
     }
   }

@@ -13,7 +13,8 @@
               <img src="~common/image/cat.png" class="pic" v-show="message.user==='robot'">
             </div>
             <div class="text-pos">
-              <p v-bind:class="{'text-user-other': message.user==='robot' || message.user!=userinfo.username, 'text-user': message.user!='robot' && message.user===userinfo.username}">{{message.user}}</p>
+              <p v-show="message.toUser === undefined" v-bind:class="{'text-user-other': message.user==='robot' || message.user!=userinfo.username, 'text-user': message.user!='robot' && message.user===userinfo.username}">{{message.user}}</p>
+              <p v-show="message.toUser != undefined" class="text-user-other">{{message.user}}(私聊)</p>
               <div v-bind:class="{'text-box-other': message.user==='robot' || message.user!=userinfo.username, 'text-box': message.user!='robot' && message.user===userinfo.username}">
                 <p class="text-msg" v-html="message.msg"></p>
               </div>
@@ -69,7 +70,7 @@
   import Scroll from 'base/scroll/scroll'
   import Member from 'components/member/member'
   import io from 'socket.io-client'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters} from 'vuex'
   import {Mixin} from 'common/js/mixin'
   export default {
     mixins: [Mixin],
@@ -115,6 +116,10 @@
       this.avatar = this.userinfo.avatar
       this.socket.emit('join', {username: this.username, avatar: this.avatar})
       this.socket.on('chat message', function(msg){
+        console.log(msg)
+        self.chatmsgs.push(msg)
+      })
+      this.socket.on('private', function(msg) {
         self.chatmsgs.push(msg)
       })
     },
@@ -124,41 +129,68 @@
     },
     methods: {
       back() {
-        this.$router.back()
-        this.socket.emit('leave', {username: this.username, avatar: this.avatar})
+        if (parseInt(this.id) != 0 && parseInt(this.id) != 1 && parseInt(this.id) != 2) {
+          this.$router.go(-2)
+        }
+        else if (parseInt(this.id) === 1 || parseInt(this.id) === 2) {
+          this.socket.emit('leave', {username: this.username, avatar: this.avatar})
+          this.$router.back()
+        }
+        else {
+          this.$router.back()
+        }
       },
       send() {
         if (this.message != "" && !this.isFile && !this.isImage ) {
+          this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
           if (parseInt(this.id) === 0) {
-            this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
             this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
             robot(this.message).then((res) => {
               this.chatmsgs.push({user: 'robot', msg: res.results[0].values.text})
             })
           }
-          else {
-            this.message = this.message.replace(/</g, "&lt").replace(/>/g,"&gt")
+          else if (parseInt(this.id) === 1 || parseInt(this.id) === 2) {
             this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
             this.socket.emit('chat message', {user: this.username, msg: this.message, avatar: this.avatar})
+          }
+          else {
+            this.chatmsgs.push({user: this.username, msg: this.message, avatar: this.avatar})
+            this.socket.emit('private', {user: this.username, msg: this.message, avatar: this.avatar, toUser: this.id})
           }
           this.message = ""
         }
         else if (this.isFile) {
           if (this.files.length != 0) {
             let tag = `<a href="http://localhost:3000/upload/${this.files[0].name}" download="http://localhost:3000/upload/${this.files[0].name}"><img src="/static/folder.png" width="50px" height="50px"></a>`
-            this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
-            this.socket.on('send successful', () => {
-              this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
-            })
+            if (parseInt(this.id) === 1 || parseInt(this.id) === 2) {
+              this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+              this.socket.on('send successful', () => {
+                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+              })
+            }
+            else {
+              this.socket.emit('private file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar, toUser: this.id})
+              this.socket.on('private file successful', () => {
+                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+              })
+            }
           }
         }
         else if (this.isImage) {
           if (this.files.length != 0) {
             let tag = `<img src="http://localhost:3000/upload/${this.files[0].name}" width="120px" height="120px">`
-            this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
-            this.socket.on('send successful', () => {
-              this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
-            })
+            if (parseInt(this.id) === 1 || parseInt(this.id) === 2) {
+              this.socket.emit('send file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar})
+              this.socket.on('send successful', () => {
+                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+              })
+            }
+            else {
+              this.socket.emit('private file', {user: this.username, msg: tag, file: this.files[0], filename: this.files[0].name, avatar: this.avatar, toUser: this.id})
+              this.socket.on('private file successful', () => {
+                this.chatmsgs.push({user: this.username, msg: tag, avatar: this.avatar})
+              })
+            }
           }
         }
       },
@@ -254,7 +286,7 @@
     top: 0px;
     width: 100%;
     height: 60px;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(0, 0, 0);
     border-top: 1px solid rgba(7,17,27,0.1);
   }
   .icon-back-pos {
@@ -335,6 +367,16 @@
     right: 25px;
     font-size: 13px;
     color: rgba(7,17,27,0.7);
+  }
+  .text-private {
+    float: right;
+    width: 100px;
+    text-align: right;
+    position: relative;
+    top: 5px;
+    right: 20px;
+    font-size: 13px;
+    color: rgba(7,17,27,0.7);;
   }
   .text-box {
     display: block;
@@ -435,7 +477,6 @@
     width: 100%;
     height: 180px;
     background-color: rgb(255,255,255);
-    overflow: auto;
     border-top: 1px solid rgba(194, 217, 240, 0.6);
   }
   .upload-picture {
