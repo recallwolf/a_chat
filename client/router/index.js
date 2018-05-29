@@ -7,6 +7,7 @@ import Chatroom from 'components/chatroom/chatroom'
 import Login from 'components/login/login'
 import Regsiter from 'components/register/register'
 import Weather from 'components/weather/weather'
+import Express from 'components/express/express'
 
 Vue.use(Router)
 
@@ -55,6 +56,11 @@ export default new Router({
           path: 'weather',
           name: 'Weather',
           component: Weather
+        },
+        {
+          path: 'express',
+          name: 'Express',
+          component: Express
         }
       ]
     },

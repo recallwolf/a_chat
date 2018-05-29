@@ -4,21 +4,25 @@
       <div class="mask">
         <span class="icon-back-pos icon-back" v-on:click="back"></span>
         <div class="content">
-          <p class="temp">23<span class="unit">℃</span></p>
-          <p class="date">2018-05-28</p>
-          <span class="icon-sun-pos icon-sun"></span>
-          <span class="temp-text">晴</span>
-          <p class="city"><span class="icon-placeholder"></span> 长沙</p>
+          <p class="temp">{{average}}<span class="unit">℃</span></p>
+          <p class="date">{{data.date}}</p>
+          <img v-if="this.weather[0]!=undefined" v-bind:src="imgUrl" class="weather-pic">
+          <span class="temp-text">{{data.cond_txt_d}}</span>
+          <p class="city"><span class="icon-placeholder"></span> {{city}}</p>
+          <p class="wind">{{data.wind_dir}}</p>
         </div>
         <div class="tab">
-          <div class="left">
+          <div class="left" v-on:click="change(0)">
             <p class="day">今天</p>
+            <p class="day-date" v-if="this.weather[0]!=undefined">{{this.weather[0].cond_txt_d}}</p>
           </div>
-          <div class="middle">
+          <div class="middle" v-on:click="change(1)">
             <p class="day">明天</p>
+            <p class="day-date" v-if="this.weather[0]!=undefined">{{this.weather[1].cond_txt_d}}</p>
           </div>
-          <div class="right">
+          <div class="right" v-on:click="change(2)">
             <p class="day">后天</p>
+            <p class="day-date" v-if="this.weather[0]!=undefined">{{this.weather[2].cond_txt_d}}</p>
           </div>
         </div>
       </div>
@@ -27,10 +31,41 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {getWeather} from 'api/weather'
   export default {
+    data() {
+      return {
+        city: '',
+        weather: [],
+        data: {}
+      }
+    },
+    computed: {
+      average() {
+        return Math.floor((this.data.tmp_max/2 + this.data.tmp_min/2))
+      },
+      imgUrl() {
+        return `/static/weather/${this.data.cond_code_d}.png`
+      }
+    },
+    created() {
+      this._getWeather()
+    },
     methods: {
       back() {
         this.$router.back()
+      },
+      _getWeather() {
+        getWeather().then((res) => {
+          this.city = res.HeWeather6[0].basic.location
+          this.weather[0] = res.HeWeather6[0].daily_forecast[0]
+          this.weather[1] = res.HeWeather6[0].daily_forecast[1]
+          this.weather[2] = res.HeWeather6[0].daily_forecast[2]
+          this.data = this.weather[0]
+        })
+      },
+      change(index) {
+        this.data = this.weather[index]
       }
     }
   }
@@ -91,12 +126,12 @@
     font-weight: 300;
     color: rgba(255,255,255, 0.8);
   }
-  .icon-sun-pos {
+  .weather-pic {
     position: relative;
     top: 30px;
     left: 8px;
-    font-size: 35px;
-    color: rgba(255,255,255, 0.8);
+    width: 35px;
+    height: 35px;
   }
   .temp-text {
     position: relative;
@@ -108,6 +143,13 @@
   .city {
     position: relative;
     top: 50px;
+    left: 13px;
+    font-size: 22px;
+    color: rgba(255,255,255, 0.8);
+  }
+  .wind {
+    position: relative;
+    top: 70px;
     left: 13px;
     font-size: 22px;
     color: rgba(255,255,255, 0.8);
@@ -135,6 +177,13 @@
   .day {
     position: relative;
     top: 10px;
+    text-align: center;
+    font-size: 18px;
+    color: rgba(194, 217, 240, 0.7);
+  }
+  .day-date {
+    position: relative;
+    top: 30px;
     text-align: center;
     font-size: 18px;
     color: rgba(194, 217, 240, 0.7);

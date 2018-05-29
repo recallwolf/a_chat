@@ -11,7 +11,7 @@ const userData = [
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
-});
+})
 
 router.get('/api/robot', function(req, res) {
   var url = 'http://openapi.tuling123.com/openapi/api/v2'
@@ -32,6 +32,20 @@ router.get('/api/robot', function(req, res) {
 	  console.log(response)
 	})
 });
+
+router.get('/api/weather', function(req, res) {
+  var url = 'https://free-api.heweather.com/s6/weather/forecast'
+  axios.get(url, {
+    params: {
+      location: 'auto_ip',
+      key: 'b59cc2987db5483a8b851ffe9c36ae42'
+    }
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((response) => {
+	  console.log(response)
+	})
+})
 
 router.post('/api/login', function(req, res){
   let username = req.body.username

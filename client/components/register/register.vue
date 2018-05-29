@@ -1,9 +1,6 @@
 <template>
-	<transition name="slide">
-		<div>
-			<div class="headers">
-				<span class="icon-back-pos icon-back" v-on:click="back"></span>
-			</div>
+		<div class="bg">
+			<span class="icon-back-pos icon-back" v-on:click="back"></span>
 			<scroll class="register">
 				<div>
 					<h1 class="text">注册</h1>
@@ -16,9 +13,7 @@
 					</form>
 				</div>
 			</scroll>
-			<div class="footer"></div>
 		</div>
-	</transition>
 </template>
 
 <script type="text/ecmascript-6">
@@ -39,15 +34,16 @@
 </script>
 
 <style scoped>
-	.headers {
-    position: fixed;
-    display: flex;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background-color: rgb(0, 0, 0);
-    border-top: 1px solid rgba(7,17,27,0.1);
-  }
+	.bg {
+		position:absolute;
+		height: 100%;
+		width: 100%;
+		background-image: url('~common/image/login.jpg');
+		background-position: top;
+		background-attachment: fixed;
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
 	.icon-back-pos {
     color: rgb(255,255,255);
     font-size: 20px;
@@ -57,18 +53,16 @@
   }
 	.register {
 		position: fixed;
-    z-index: -1;
     top: 58px;
     left: 0;
     bottom: 58px;
     right: 0;
 		height: 100%;
-    background-color: rgb(255,255,255);
 	}
 	.text {
 		font-size: 32px;
 		font-weight: 400;
-		color: rgba(0,0,0,0.5);
+		color: rgba(255,255,255,0.8);
 		position: relative;
     top: 15px;
     bottom: 0;
@@ -99,24 +93,9 @@
 		width: 94%;
 		height: 40px;
 		border-radius: 20px;
-		background-color: rgb(144,147,153);
+		background-color: rgb(64,158,255);
 		border: none;
 		font-size: 20px;
 		color: rgba(255,255,255,0.7);
 	}
-	.footer {
-    position: fixed;
-    display: flex;
-    bottom: 0px;
-    width: 100%;
-    height: 60px;
-    background-color: rgb(0, 0, 0);
-    border-top: 1px solid rgba(7,17,27,0.1);
-  }
-	.slide-enter-active, .slide-leave-active {
-    transition: all 0.3s;
-  }
-  .slide-enter, .slide-leave-to {
-    transform: translate3d(100%, 0, 0);
-  }
 </style>

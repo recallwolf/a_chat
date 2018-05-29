@@ -1,18 +1,16 @@
 <template>
-	<div>
-		<div class="headers"></div>
+	<div class="bg">
 		<scroll class="login">
 			<div>
 				<h1 class="text">登录</h1>
 				<form class="form-pos">
-					<input type="text" class="text-input" id="text" v-model="username">
-					<input type="password" class="text-input" v-model="password">
+					<input type="text" placeholder="id" class="text-input" id="text" v-model="username">
+					<input type="password" placeholder="password" class="text-input" v-model="password">
 					<input type="button" class="button-log" value="登录" v-on:click="toChat">
 					<input type="button" class="button-reg" value="注册" v-on:click="toRegsiter">
 				</form>
 			</div>
 		</scroll>
-		<div class="footer"></div>
 	</div>
 </template>
 
@@ -71,29 +69,29 @@
 </script>
 
 <style scoped>
-	.headers {
-    position: fixed;
-    display: flex;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background-color: rgb(0, 0, 0);
-    border-top: 1px solid rgba(7,17,27,0.1);
-  }
+	.bg {
+		position:absolute;
+		height: 100%;
+		width: 100%;
+		background-image: url('~common/image/login.jpg');
+		background-position: top;
+		background-attachment: fixed;
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
 	.login{
 		position: fixed;
-    z-index: -1;
+    z-index: 1;
     top: 58px;
     left: 0;
     bottom: 58px;
     right: 0;
 		height: 100%;
-    background-color: rgb(255,255,255);
 	}
 	.text {
 		font-size: 32px;
 		font-weight: 400;
-		color: rgba(0,0,0,0.5);
+		color: rgba(255,255,255,0.8);
 		position: relative;
     top: 15px;
     bottom: 0;
@@ -142,13 +140,4 @@
 		font-size: 20px;
 		color: rgba(255,255,255,0.7);
 	}
-	.footer {
-    position: fixed;
-    display: flex;
-    bottom: 0px;
-    width: 100%;
-    height: 60px;
-    background-color: rgb(0, 0, 0);
-    border-top: 1px solid rgba(7,17,27,0.1);
-  }
 </style>

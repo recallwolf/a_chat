@@ -3,11 +3,11 @@
     <tab></tab>
     <scroll class="home">
       <div>
-        <div class="func-list">
+        <div class="func-list" v-on:click="toWeather">
           <div class="func-pic">
             <img src="~common/image/doc.png" height="32px" width="32px;">
           </div>
-          <div class="func-text" v-on:click="toWeather">
+          <div class="func-text">
             <p class="text">天气</p>
           </div>
         </div>
@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <div class="func-list">
+        <div class="func-list" v-on:click="toExpress">
           <div class="func-pic">
             <img src="~common/image/pdf.png" height="32px" width="32px;">
           </div>
@@ -50,7 +50,9 @@
       </div>
     </scroll>
     <transition name="slide">
-      <router-view/>
+      <keep-alive>
+        <router-view/>
+      </keep-alive>
     </transition>
   </div>
 </template>
@@ -68,6 +70,9 @@
     methods: {
       toWeather() {
         this.$router.push('home/weather')
+      },
+      toExpress() {
+        this.$router.push('home/express')
       }
     }
   }
