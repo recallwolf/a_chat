@@ -3,14 +3,16 @@
     <div class="bg">
       <div class="mask">
         <span class="icon-back-pos icon-back" v-on:click="back"></span>
-        <div class="content">
-          <p class="temp">{{average}}<span class="unit">℃</span></p>
-          <p class="date">{{data.date}}</p>
-          <img v-if="this.weather[0]!=undefined" v-bind:src="imgUrl" class="weather-pic">
-          <span class="temp-text">{{data.cond_txt_d}}</span>
-          <p class="city"><span class="icon-placeholder"></span> {{city}}</p>
-          <p class="wind">{{data.wind_dir}}</p>
-        </div>
+        <scroll class="content">
+          <div>
+            <p class="temp">{{average}}<span class="unit">℃</span></p>
+            <p class="date">{{data.date}}</p>
+            <img v-if="this.weather[0]!=undefined" v-bind:src="imgUrl" class="weather-pic">
+            <span class="temp-text">{{data.cond_txt_d}}</span>
+            <p class="city"><span class="icon-placeholder"></span> {{city}}</p>
+            <p class="wind">{{data.wind_dir}}</p>
+          </div>
+        </scroll>
         <div class="tab">
           <div class="left" v-on:click="change(0)">
             <p class="day">今天</p>
@@ -32,6 +34,7 @@
 
 <script type="text/ecmascript-6">
   import {getWeather} from 'api/weather'
+  import Scroll from 'base/scroll/scroll'
   export default {
     data() {
       return {
@@ -39,6 +42,9 @@
         weather: [],
         data: {}
       }
+    },
+    components: {
+      Scroll
     },
     computed: {
       average() {
@@ -75,9 +81,9 @@
   .weather {
     position: fixed;
     z-index: 1;
-    top: 0px;
+    top: 0;
     left: 0;
-    bottom: 0px;
+    bottom: 0;
     right: 0;
     background-color: rgb(255,255,255);
   }
@@ -105,8 +111,12 @@
     margin-left: 10px;
   }
   .content {
-    position: relative;
+    position: fixed;
+    z-index: 0;
+    top: 10%;
     left: 20px;
+    bottom: 200px;
+    right: 0;
   }
   .temp {
     font-size: 150px;
@@ -160,7 +170,7 @@
     bottom: 0px;
     width: 100%;
     height: 100px;
-    background-color: rgba(7, 17, 27, 0.4);
+    background-color: rgba(7, 17, 27, 0.9);
     border-top: 0.5px solid rgba(194, 217, 240, 0.3);
   }
   .left {

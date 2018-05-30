@@ -29,7 +29,7 @@
 			Scroll
 		},
 		mounted() {
-			this.checkServerToken()
+			//this.checkServerToken()
 		},
 		methods: {
 			toChat() {

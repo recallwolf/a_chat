@@ -34,7 +34,7 @@ router.get('/api/robot', function(req, res) {
 });
 
 router.get('/api/weather', function(req, res) {
-  var url = 'https://free-api.heweather.com/s6/weather/forecast'
+  let url = 'https://free-api.heweather.com/s6/weather/forecast'
   axios.get(url, {
     params: {
       location: 'auto_ip',
@@ -85,6 +85,23 @@ router.get('/api/userinfo', function(req, res) {
     let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
     res.json(userinfo)
   }
+})
+
+router.get('/api/express', function(req, res) {
+  let url = 'https://www.kuaidi100.com/query'
+  let postid = req.query.postid
+  let type = req.query.type
+
+  axios.get(url, {
+    params: {
+      type: type,
+      postid: postid
+    }
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((response) => {
+	  console.log(response)
+  })
 })
 
 module.exports = router;

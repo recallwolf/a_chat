@@ -286,7 +286,7 @@
     top: 0px;
     width: 100%;
     height: 60px;
-    background-color: rgb(0, 0, 0);
+    background-image: url('~common/image/nav.jpg');
     border-top: 1px solid rgba(7,17,27,0.1);
   }
   .icon-back-pos {
