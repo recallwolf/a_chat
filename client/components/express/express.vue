@@ -48,7 +48,7 @@
         isShowDetail: false,
         delivery: '选择快递公司',
         orderNumber: '',
-        details: {}
+        details: []
       }
     },
     activated() {

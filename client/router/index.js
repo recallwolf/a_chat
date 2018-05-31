@@ -8,6 +8,8 @@ import Login from 'components/login/login'
 import Regsiter from 'components/register/register'
 import Weather from 'components/weather/weather'
 import Express from 'components/express/express'
+import Daily from 'components/daily/daily'
+import News from 'components/news/news'
 
 Vue.use(Router)
 
@@ -61,6 +63,16 @@ export default new Router({
           path: 'express',
           name: 'Express',
           component: Express
+        },
+        {
+          path: 'daily',
+          name: 'Daliy',
+          component: Daily
+        },
+        {
+          path: 'news',
+          name: 'News',
+          component: News
         }
       ]
     },

@@ -104,4 +104,36 @@ router.get('/api/express', function(req, res) {
   })
 })
 
+let id = 1600
+setInterval(() => {
+  id++
+}, 24*60*60*1000) 
+router.get('/api/daily', function(req, res) {
+  let url = `http://v3.wufazhuce.com:8000/api/hp/detail/${id}`
+  axios.get(url, {
+    params: {
+      version: '3.5.0',
+      platform: 'android'
+    }
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((response) => {
+	  console.log(response)
+  })
+})
+
+router.get('/api/news', function(req, res) {
+  let category = req.query.category
+  let url = 'http://is.snssdk.com/api/news/feed/v51/'
+  axios.get(url, {
+    params: {
+      category: category
+    }
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((response) => {
+	  console.log(response)
+  })
+})
+
 module.exports = router;

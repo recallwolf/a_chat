@@ -3,7 +3,7 @@
     <tab></tab>
     <scroll class="home">
       <div>
-        <div class="func-list" v-on:click="toWeather">
+        <div class="func-list" v-on:click="to('weather')">
           <div class="func-pic">
             <img src="~common/image/doc.png" height="32px" width="32px;">
           </div>
@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div class="func-list">
+        <div class="func-list" v-on:click="to('daily')">
           <div class="func-pic">
             <img src="~common/image/html.png" height="32px" width="32px;">
           </div>
@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <div class="func-list" v-on:click="toExpress">
+        <div class="func-list" v-on:click="to('express')">
           <div class="func-pic">
             <img src="~common/image/pdf.png" height="32px" width="32px;">
           </div>
@@ -39,7 +39,7 @@
           </div>
         </div>
 
-        <div class="func-list">
+        <div class="func-list" v-on:click="to('news')">
           <div class="func-pic">
             <img src="~common/image/mp3.png" height="32px" width="32px;">
           </div>
@@ -68,11 +68,8 @@
       Scroll
     },
     methods: {
-      toWeather() {
-        this.$router.push('home/weather')
-      },
-      toExpress() {
-        this.$router.push('home/express')
+      to(router) {
+        this.$router.push(`home/${router}`)
       }
     }
   }
