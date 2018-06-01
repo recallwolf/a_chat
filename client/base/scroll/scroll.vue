@@ -19,12 +19,27 @@
           probeType: 3,
           click: true
         })
+
+        this.scroll.on('scrollEnd', () => {
+          if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+            this.$emit('scrollToEnd')
+          }
+        })
+
+        this.scroll.on('scrollStart', () => {
+          if (this.scroll.y >= (-50)) {
+            this.$emit('scrollToStart')
+          }
+        })
       },
       refresh() {
         this.scroll && this.scroll.refresh()
       },
-      scrollTo() {
+      scrollBottom() {
         this.scroll && this.scroll.scrollTo(0, this.scroll.maxScrollY)
+      },
+      scrollTOP() {
+        this.scroll && this.scroll.scrollTo(0, 0)
       }
     }
   }

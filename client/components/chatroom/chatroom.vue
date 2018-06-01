@@ -106,7 +106,7 @@
       chatmsgs() {
         this.$refs.scroll.refresh()
         setTimeout(() => {
-          this.$refs.scroll.scrollTo()
+          this.$refs.scroll.scrollBottom()
         }, 20)
       }
     },

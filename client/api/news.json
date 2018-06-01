@@ -1,16 +1,10 @@
 {
   "热点":	"news_hot",
-  "视频":	"video",
   "社会":	"news_society",
   "娱乐":	"news_entertainment",
-  "问答":	"question_and_answer",
-  "图片":	"组图",
   "科技":	"news_tech",
   "汽车":	"news_car",
-  "体育":	"news_sport",
   "财经":	"news_finance",
   "军事":	"news_military",
-  "国际":	"news_world",
-  "段子":	"essay_joke",
-  "趣图":	"image_funny"
+  "国际":	"news_world"
 }

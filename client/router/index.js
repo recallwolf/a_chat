@@ -10,6 +10,8 @@ import Weather from 'components/weather/weather'
 import Express from 'components/express/express'
 import Daily from 'components/daily/daily'
 import News from 'components/news/news'
+import Content from 'components/news/content/content'
+import Ticket from 'components/ticket/ticket'
 
 Vue.use(Router)
 
@@ -70,9 +72,21 @@ export default new Router({
           component: Daily
         },
         {
+          path: 'ticket',
+          name: 'Ticket',
+          component: Ticket
+        },
+        {
           path: 'news',
           name: 'News',
-          component: News
+          component: News,
+          children: [
+            {
+              path: 'content',
+              name: 'Content',
+              component: Content
+            }
+          ]
         }
       ]
     },

@@ -3,52 +3,72 @@
     <div class="header">
       <span v-on:click="back" class="icon-back-pos icon-back"></span>
     </div>
-    <div class="menu-list">
-      <p v-for="(value, key, index) in news" 
-          v-bind:key="index" 
-          v-on:click="_getNews(value)"
-          class="menu-text">
-        {{key}}
-      </p>
-    </div>
-    <div class="news-list" >
-      <div  v-for="(value, index) in parseNews" v-bind:key="index">
-        <p>{{value.content.abstract}}</p>
+    <div class="menu-list" ref="menuList">
+      <div class="menu-box" ref="menuBox">
+        <div v-for="(value, key, index) in news" v-bind:key="index" class="menu-text" v-on:click="scrollX(index)">
+          <router-link :to="{path: '/home/news/content', query: {category: value}}" active-class="menu-text-active" exact>
+            {{key}}
+          </router-link>
+        </div>
       </div>
     </div>
+    <router-view/>
   </div>
 </template>
      
 <script type="text/ecmascript-6">
-  import {getNews} from 'api/news'
   import news from 'api/news.json'
+  import BScroll from 'better-scroll'
   export default {
     data() {
       return {
-        news: news,
-        newsList: []
-      }
-    },
-    computed: {
-      parseNews() {
-        for (let i in this.newsList) {
-          this.newsList[i].content = JSON.parse(this.newsList[i].content)
-        }
-        return this.newsList
+        news: news
       }
     },
     created() {
-      this._getNews(news[0])
+      this.$router.push({
+        path: '/home/news/content', 
+        query: {
+          category: this.news['热点']
+        }
+      })
+      
+      this.$nextTick(() => {
+        this._initScroll()
+      })
+    },
+    activated() {
+      this.$router.push({
+        path: '/home/news/content', 
+        query: {
+          category: this.news['热点']
+        }
+      })
+      
+       this.$nextTick(() => {
+        this._initScroll()
+      })
     },
     methods: {
-      _getNews(category) {
-        getNews(category).then((res) => {
-          this.newsList = res.data
-          console.log(this.newsList[1])
+      _initScroll() {
+        let count = Object.keys(this.news).length
+        let width = count * 55
+        this.$refs.menuBox.style.width = width + 'px'
+        this.menuScroll = new BScroll(this.$refs.menuList, {
+          scrollX: true,
+          eventPassthrough: 'vertical'
         })
       },
       back() {
-        this.$router.back()
+        this.$router.push('/home')
+      },
+      scrollX(index) {
+        let width = this.$refs.menuList.clientWidth
+        let menuWidth = index * 55
+        let reduceWidth = menuWidth - width/2
+        if (reduceWidth > -23 && reduceWidth < 88) {
+          this.menuScroll.scrollTo(-reduceWidth-20, 0)
+        }
       }
     }
   }
@@ -86,25 +106,27 @@
     width: 100%;
     height: 35px;
     background-color: rgb(238,238,238);
-    overflow-x: auto;
+    overflow-x: hidden;
     white-space: nowrap;
     border-top: 1px solid rgba(194, 217, 240, 0.3);
     border-bottom: 1px solid rgba(194, 217, 240, 0.3);
+  }
+  .menu-box {
+    width: 440px;
   }
   .menu-text {
     display: inline-block;
     width: 55px;
     text-align: center;
     line-height: 35px;
-    color: rgba(7, 17, 27, 0.6);
+    text-decoration: none;
   }
-  .news-list {
-    position: fixed;
-    top: 95px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgb(255,255,255);
+  .menu-text-active {
+    color: rgb(248,89,89);
+  }
+  a {
+    color:rgba(7, 17, 27, 0.6);
+    text-decoration: none;
   }
 </style>
 

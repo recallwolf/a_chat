@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <div class="func-list">
+        <div class="func-list" v-on:click="to('ticket')">
           <div class="func-pic">
             <img src="~common/image/jpg.png" height="32px" width="32px;">
           </div>

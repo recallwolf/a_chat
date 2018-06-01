@@ -127,7 +127,8 @@ router.get('/api/news', function(req, res) {
   let url = 'http://is.snssdk.com/api/news/feed/v51/'
   axios.get(url, {
     params: {
-      category: category
+      category: category,
+      refer: 1
     }
   }).then((response) => {
     res.json(response.data)
