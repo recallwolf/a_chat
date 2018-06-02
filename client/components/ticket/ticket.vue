@@ -5,28 +5,54 @@
         <span v-on:click="back" class="icon-back-pos icon-back"></span>
       </div>
       <div class="station">
-        <div class="start">{{startStation}}</div>
-        <span class="icon-exchange-pos icon-exchange"></span>
-        <div class="end">{{endStation}}</div>
+        <div class="station-box">
+          <div class="start" v-on:click="toStation('start')">{{startStation.station}}</div>
+          <span class="icon-exchange-pos icon-exchange" v-on:click="exchange"></span>
+          <div class="end" v-on:click="toStation('end')">{{endStation.station}}</div>
+        </div>
       </div>
       <div class="time">{{time}}</div>
       <div class="search">查询</div>
     </div>
+    <transition name="slide">
+      <keep-alive>
+        <router-view/>
+      </keep-alive>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapGetters, mapMutations} from 'vuex'
   export default {
-    data() {
-      return {
-        startStation: '出发地',
-        endStation: '目的地',
-        time: '选择出发时间'
-      }
+    computed: {
+      ...mapGetters([
+        'startStation',
+        'endStation',
+        'time'
+      ])
     },
     methods: {
       back() {
         this.$router.push('/home')
+      },
+      toStation(location) {
+        this.$router.push({
+          path: '/home/ticket/station',
+          query: {
+            station: location
+          }
+          })
+      },
+      ...mapMutations({
+        set_startStation: 'SET_START_STATION',
+        set_endStation: 'SET_END_STATION',
+      }),
+      exchange() {
+        let start = this.startStation
+        let end = this.endStation
+        this.set_endStation(start)
+        this.set_startStation(end)
       }
     }
   }
@@ -50,6 +76,7 @@
     bottom: 0;
     right: 0;
     background-color: rgb(255,255,255);
+    width: 100%;
   }
   .header {
     position: fixed;
@@ -68,6 +95,9 @@
     margin-left: 10px;
   }
   .station {
+    width: 100%;
+  }
+  .station-box {
     position: relative;
     top: 15px;
     display: flex;
@@ -125,5 +155,10 @@
     text-align: center;
     line-height: 45px;
   }
+  .slide-enter-active, .slide-leave-active {
+    transition: all 0.3s;
+  }
+  .slide-enter, .slide-leave-to {
+    transform: translate3d(100%, 0, 0);
+  }
 </style>
-

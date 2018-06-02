@@ -1,1 +1,4 @@
 export const SET_USERINFO = 'SET_USERINFO'
+export const SET_START_STATION = 'SET_START_STATION'
+export const SET_END_STATION = 'SET_END_STATION'
+export const SET_TIME = 'SET_TIME'

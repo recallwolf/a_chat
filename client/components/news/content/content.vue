@@ -56,7 +56,7 @@
             parseData[i] = JSON.parse(res.data[i].content)
           }
           this.newsList = parseData
-          this.$refs.scroll.scrollTOP()
+          this.$refs.scroll.scrollTop()
         })
       },
       searchMore() {

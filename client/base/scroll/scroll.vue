@@ -31,6 +31,10 @@
             this.$emit('scrollToStart')
           }
         })
+        
+        this.scroll.on('scroll', (pos) => {
+          this.$emit('scroll', pos)
+        })
       },
       refresh() {
         this.scroll && this.scroll.refresh()
@@ -38,8 +42,11 @@
       scrollBottom() {
         this.scroll && this.scroll.scrollTo(0, this.scroll.maxScrollY)
       },
-      scrollTOP() {
+      scrollTop() {
         this.scroll && this.scroll.scrollTo(0, 0)
+      },
+      scrollTo_El(el) {
+        this.scroll && this.scroll.scrollToElement(el)
       }
     }
   }

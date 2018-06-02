@@ -12,6 +12,7 @@ import Daily from 'components/daily/daily'
 import News from 'components/news/news'
 import Content from 'components/news/content/content'
 import Ticket from 'components/ticket/ticket'
+import Station from 'components/ticket/station/station'
 
 Vue.use(Router)
 
@@ -74,7 +75,14 @@ export default new Router({
         {
           path: 'ticket',
           name: 'Ticket',
-          component: Ticket
+          component: Ticket,
+          children: [
+            {
+              path: 'station',
+              name: 'Station',
+              component: Station
+            }
+          ]
         },
         {
           path: 'news',
