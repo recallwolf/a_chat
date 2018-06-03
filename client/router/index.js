@@ -11,8 +11,10 @@ import Express from 'components/express/express'
 import Daily from 'components/daily/daily'
 import News from 'components/news/news'
 import Content from 'components/news/content/content'
-import Ticket from 'components/ticket/ticket'
-import Station from 'components/ticket/station/station'
+import Railway from 'components/railway/railway'
+import Station from 'components/railway/station/station'
+import Calendar from 'components/railway/calendar/calendar'
+import Ticket from 'components/railway/ticket/ticket'
 
 Vue.use(Router)
 
@@ -73,14 +75,24 @@ export default new Router({
           component: Daily
         },
         {
-          path: 'ticket',
-          name: 'Ticket',
-          component: Ticket,
+          path: 'railway',
+          name: 'Railway',
+          component: Railway,
           children: [
             {
               path: 'station',
               name: 'Station',
               component: Station
+            },
+            {
+              path: 'calendar',
+              name: 'Calendar',
+              component: Calendar
+            },
+            {
+              path: 'ticket',
+              name: 'Ticket',
+              component: Ticket
             }
           ]
         },

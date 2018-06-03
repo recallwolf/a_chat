@@ -1,6 +1,6 @@
 <template>
-  <div class="ticket">
-    <div class="ticket-box">
+  <div class="railway">
+    <div class="railway-box">
       <div class="header">
         <span v-on:click="back" class="icon-back-pos icon-back"></span>
       </div>
@@ -11,13 +11,11 @@
           <div class="end" v-on:click="toStation('end')">{{endStation.station}}</div>
         </div>
       </div>
-      <div class="time">{{time}}</div>
-      <div class="search">查询</div>
+      <div class="time" v-on:click="toCalendar">{{time}}</div>
+      <div class="search" v-on:click="toTicket">查询</div>
     </div>
     <transition name="slide">
-      <keep-alive>
-        <router-view/>
-      </keep-alive>
+      <router-view/>
     </transition>
   </div>
 </template>
@@ -38,11 +36,17 @@
       },
       toStation(location) {
         this.$router.push({
-          path: '/home/ticket/station',
+          path: '/home/railway/station',
           query: {
             station: location
           }
-          })
+        })
+      },
+      toCalendar() {
+        this.$router.push('/home/railway/calendar')
+      },
+      toTicket() {
+        this.$router.push('/home/railway/ticket')
       },
       ...mapMutations({
         set_startStation: 'SET_START_STATION',
@@ -59,7 +63,7 @@
 </script>
 
 <style scoped>
-  .ticket {
+  .railway {
     position: fixed;
     z-index: 1;
     top: 0;
@@ -68,7 +72,7 @@
     right: 0;
     background-color: rgb(255,255,255);
   }
-  .ticket-box {
+  .railway-box {
     position: fixed;
     z-index: 1;
     top: 60px;

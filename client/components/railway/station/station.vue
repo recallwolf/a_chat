@@ -88,7 +88,7 @@
         else if (this.$route.query.station === 'end') {
           this.set_endStation({station: station, code: code})
         }
-        this.$router.push('/home/ticket')
+        this.$router.push('/home/railway')
       },
       press(index) {
         let el = this.$refs.category[index]
@@ -170,4 +170,3 @@
     color: rgb(238, 27, 55);
   }
 </style>
-
