@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?br30qo');
-  src:  url('fonts/icomoon.eot?br30qo#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?br30qo') format('truetype'),
-    url('fonts/icomoon.woff?br30qo') format('woff'),
-    url('fonts/icomoon.svg?br30qo#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?7a2zwc');
+  src:  url('fonts/icomoon.eot?7a2zwc#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?7a2zwc') format('truetype'),
+    url('fonts/icomoon.woff?7a2zwc') format('woff'),
+    url('fonts/icomoon.svg?7a2zwc#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,54 +24,57 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-downward:before {
-  content: "\e90f";
+.icon-avatar:before {
+  content: "\e901";
 }
-.icon-to:before {
-  content: "\e90c";
+.icon-back:before {
+  content: "\e902";
+}
+.icon-chat:before {
+  content: "\e903";
 }
 .icon-download:before {
-  content: "\e90d";
+  content: "\e904";
 }
-.icon-exchange:before {
-  content: "\e90e";
+.icon-downward:before {
+  content: "\e905";
 }
-.icon-placeholder:before {
-  content: "\e910";
+.icon-envelope:before {
+  content: "\e906";
 }
 .icon-error:before {
+  content: "\e907";
+}
+.icon-exchange:before {
+  content: "\e908";
+}
+.icon-file:before {
+  content: "\e909";
+}
+.icon-happy:before {
+  content: "\e90a";
+}
+.icon-house:before {
   content: "\e90b";
 }
 .icon-picture:before {
-  content: "\e909";
+  content: "\e90c";
 }
-.icon-file:before {
-  content: "\e90a";
-}
-.icon-avatar:before {
-  content: "\e908";
-}
-.icon-envelope:before {
-  content: "\e907";
-}
-.icon-back:before {
-  content: "\e904";
-}
-.icon-happy:before {
-  content: "\e905";
+.icon-placeholder:before {
+  content: "\e90d";
 }
 .icon-plus:before {
-  content: "\e906";
-}
-.icon-signs:before {
-  content: "\e903";
-}
-.icon-chat:before {
-  content: "\e900";
-}
-.icon-house:before {
-  content: "\e901";
+  content: "\e90e";
 }
 .icon-settings:before {
-  content: "\e902";
+  content: "\e90f";
+}
+.icon-signs:before {
+  content: "\e910";
+}
+.icon-to:before {
+  content: "\e911";
+}
+.icon-long-to:before {
+  content: "\e900";
 }

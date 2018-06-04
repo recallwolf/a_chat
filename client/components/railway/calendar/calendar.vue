@@ -59,9 +59,10 @@
       }),
       uploadDate(index) {
         let firstDay = new Date()
-        firstDay.setDate(1) 
-        firstDay.setMonth(this.month) 
-        let beforeEl = firstDay.getDay()
+        firstDay.setDate(1) //当月第一天
+        firstDay.setFullYear(this.year)
+        firstDay.setMonth(this.month)
+        let beforeEl = firstDay.getDay() //获取上月占本月index数 or 当月第一天星期
         if (index >= beforeEl) {
           this.setTime(`${this.year}-${this.month + 1}-${index - beforeEl + 1}`)
           this.$router.back()
@@ -121,7 +122,6 @@
     }
   }
 </script>
-
 
 <style scoped>
   .calendar {

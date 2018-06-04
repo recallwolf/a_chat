@@ -137,4 +137,28 @@ router.get('/api/news', function(req, res) {
   })
 })
 
+router.get('/api/ticket', function(req, res) {
+  let startStation = JSON.parse(req.query.startStation)
+  let endStation = JSON.parse(req.query.endStation)
+  let time = req.query.time
+  let url = 'http://huoche.tuniu.com/station_1708_2500'
+
+  axios.get(url, {
+    params: {
+      r: 'train/trainTicket/getTickets',
+      'primary[departureDate]': time,
+      'primary[departureCityCode]': startStation.code,
+      'primary[departureCityName]': startStation.station,
+      'primary[arrivalCityCode]': endStation.code,
+      'primary[arrivalCityName]': endStation.station,
+      start: 0,
+      limit: 0
+    }
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((response) => {
+	  console.log(response)
+  })
+})
+
 module.exports = router;

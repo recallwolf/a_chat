@@ -28,7 +28,15 @@
         'startStation',
         'endStation',
         'time'
-      ])
+      ]),
+      fullContent() {
+        if (this.startStation.station!='出发地' && this.endStation.station!='目的地' && this.time!='选择出发时间' && this.startStation.station!='目的地' && this.endStation.station!='出发地') {
+          return true
+        }
+        else {
+          return false
+        }
+      }
     },
     methods: {
       back() {
@@ -46,7 +54,9 @@
         this.$router.push('/home/railway/calendar')
       },
       toTicket() {
-        this.$router.push('/home/railway/ticket')
+        if (this.fullContent) {
+          this.$router.push('/home/railway/ticket')
+        }
       },
       ...mapMutations({
         set_startStation: 'SET_START_STATION',

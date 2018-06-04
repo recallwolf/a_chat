@@ -172,7 +172,7 @@
     position: relative;
     font-size: 32px;
     top: 45%;
-    color: rgb(96, 98, 102)
+    color: rgb(96, 98, 102);
   }
   .express-name {
     line-height: 50px;
