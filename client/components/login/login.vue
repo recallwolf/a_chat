@@ -23,6 +23,7 @@
 	import axios from 'axios'
 	import {mapMutations} from 'vuex'
 	import Scroll from 'base/scroll/scroll'
+	import {login, check} from 'api/user'
 	export default {
 		data() {
 			return {
@@ -41,18 +42,15 @@
 		methods: {
 			toChat() {
 				if (this.username != '' && this.password != '' ) {
-					axios.post('/api/login', {
-    				username: this.username,
-    				password: this.password
-  				}).then((res) => {
-						if (res.data.username != undefined) {
+					login(this.username, this.password).then((res) => {
+						if (res.username != undefined) {
 							this.$router.push('/chat')
-							this.setUserinfo(res.data)
-							let userinfo  = JSON.stringify(res.data)
+							this.setUserinfo(res)
+							let userinfo  = JSON.stringify(res)
 							localStorage.setItem('userinfo',userinfo)
 						}
 						else {
-							this.tip = res.data
+							this.tip = res
 						}
 					})
 					this.username = ''
@@ -64,13 +62,9 @@
 			},
 			checkServerToken() {
 				let info = JSON.parse(localStorage.getItem('userinfo'))
-				console.log(info)
 				if (info != null) {
-					axios.post('/api/check', {
-						username: info.username,
-						token: info.token
-					}).then((res) => {
-						if (res.data === 'success') {
+					check(info.username, info.token).then((res) => {
+						if (res === 'success') {
 							this.$router.push('/chat')
 						}
 					})

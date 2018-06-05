@@ -23,7 +23,7 @@
 
 <script type="text/ecmascript-6">
 	import Scroll from 'base/scroll/scroll'
-	import axios from 'axios'
+	import {check, register} from 'api/user'
 	export default {
 		data() {
 			return {
@@ -51,20 +51,15 @@
 						this.tip = '密码不一致'
 					}
 					else {
-						axios.post('/api/register', {
-							username: this.username,
-							email: this.email,
-							password: this.password,
-							repassword: this.repassword
-						}).then((res) => {
-							if (res.data === '注册成功') {
+						register(this.username, this.email, this.password, this.repassword).then((res) => {
+							if (res === '注册成功') {
 								setTimeout(() => {
-									this.tip = res.data
+									this.tip = res
 									this.$router.push('/login')
 								}, 1500)
 							}
 							else {
-								this.tip = res.data
+								this.tip = res
 							}
 						})
 						this.username = ''
@@ -76,13 +71,9 @@
 			},
 			checkServerToken() {
 				let info = JSON.parse(localStorage.getItem('userinfo'))
-				console.log(info)
 				if (info != null) {
-					axios.post('/api/check', {
-						username: info.username,
-						token: info.token
-					}).then((res) => {
-						if (res.data === 'success') {
+					check(info.username, info.token).then((res) => {
+						if (res === 'success') {
 							this.$router.push('/chat')
 						}
 					})

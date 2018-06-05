@@ -1,5 +1,5 @@
 import {mapGetters, mapMutations} from 'vuex'
-import axios from 'axios'
+import {check} from 'api/user'
 
 export const Mixin = {
   computed: {
@@ -15,11 +15,8 @@ export const Mixin = {
     checkServerToken() {
       let info = JSON.parse(localStorage.getItem('userinfo'))
       if (info != null) {
-        axios.post('/api/check', {
-          username: info.username,
-          token: info.token
-        }).then((res) => {
-          if (res.data === 'fail') {
+        check(info.username, info.token).then((res) => {
+          if (res === 'fail') {
             this.$router.push('/login')
           }
         })
