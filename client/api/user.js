@@ -14,11 +14,9 @@ export function login(username, password) {
 export function check(username, token) {
   const url = '/api/check'
 
-  return axios.get(url, {
-    params: {
-      username: username,
-      token: token
-    }
+  return axios.post(url, {
+    username: username,
+    token: token
   }).then((res) => {
     return Promise.resolve(res.data)
   })

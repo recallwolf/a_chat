@@ -5,7 +5,7 @@
         <span class="icon-back-pos icon-back" v-on:click="back"></span>
         <scroll class="content">
           <div>
-            <p class="temp">{{average}}<span class="unit">℃</span></p>
+            <p class="temp" v-show="Object.keys(data)!=0">{{average}}<span class="unit">℃</span></p>
             <p class="date">{{data.date}}</p>
             <img v-if="this.weather[0]!=undefined" v-bind:src="imgUrl" class="weather-pic">
             <span class="temp-text">{{data.cond_txt_d}}</span>
