@@ -8,8 +8,8 @@ export const Mixin = {
     ])
   },
   mounted() {
-    //this.checkServerToken()
-    //this.checkVuex()
+    this.checkServerToken()
+    this.checkVuex()
   },
   methods: {
     checkServerToken() {

@@ -2,11 +2,8 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios');
 var jwt = require('jsonwebtoken');
+var db = require('../db.js');
 
-const userData = [
-  {username: 'recallwolf', email: '9900@qq.com', password: '123456', avatar: 'avatar/panda.jpg'},
-  {username: 'recalldoge', email: '8848@qq.com', password: '123456', avatar: 'avatar/cat.jpg'}
-]
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -47,44 +44,108 @@ router.get('/api/weather', function(req, res) {
 	})
 })
 
-router.post('/api/login', function(req, res){
+router.post('/api/login', function(req, res) {
   let username = req.body.username
   let password = req.body.password
-  let user = userData.find((value) => {
-    return value.username === username
+  let queryString = `select * from users where username='${username}'`
+  db.query(queryString, function(err, rows){
+    if (err) {
+      console.log(err)
+    }
+    else {
+      if (rows.length === 0) {
+        res.send('用户不存在')
+      }
+      else if (rows[0].password === password) {
+        let token = jwt.sign(req.body, 'user_pass_word', {expiresIn: 60*60*24*7})
+        let queryString = `update users set token='${token}' where username='${rows[0].username}'`
+        db.query(queryString, function(err, row) {
+          if (err) {
+            console.log(err)
+          }
+          else {
+            let userinfo = {username: rows[0].username, email: rows[0].email, avatar: rows[0].avatar, token: token}
+            res.json(userinfo)
+          }
+        })
+      }
+      else if (rows[0].password != password) {
+        res.send('密码错误')
+      }
+    }
   })
-  let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
-  if (user != undefined && user.password === password) {
-    token = jwt.sign(req.body, 'user_pass_word', {expiresIn: 60*60*24*7})
-    user.token = token
-    userinfo.token = token
-    res.json(userinfo)
+})
+
+let id = 0
+router.post('/api/register', function(req, res) {
+  let username = req.body.username
+  let email = req.body.email
+  let password = req.body.password
+  let repassword = req.body.repassword
+  if (password != repassword) {
+    res.send('密码不一致')
   }
+  else {
+    let queryString = `select * from users where username='${username}'`
+    db.query(queryString, function(err, rows) {
+      if (err) {
+        console.log(err)
+      }
+      else if (rows.length != 0) {
+        res.send('用户名存在')
+      }
+    })
+  }
+
+  let picture = Math.random() > 0.5 ? '/avatar/panda.jpg' : '/avatar/cat.jpg'
+  let queryString = `insert into users(id, username, email, password, avatar) values(${id}, '${username}', '${email}', '${password}', '${picture}')`
+  db.query(queryString, function(err, rows) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      res.send('注册成功')
+      id++
+    }
+  })
 })
 
 router.post('/api/check', function(req, res) {
   let frontEndToken = req.body.token
   let username = req.body.username
-  let user = userData.find((value) => {
-    return value.username === username
+  let queryString = `select * from users where username='${username}'`
+  db.query(queryString, function(err, rows) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      if (rows.length === 0) {
+        res.send('fail')
+      }
+      else if (rows[0].token != frontEndToken) {
+        res.send('fail')
+      }
+      else if (rows[0].token === frontEndToken) {
+        res.send('success')
+      }
+    }
   })
-  if (frontEndToken != user.token) {
-    res.send('fail')
-  }
-  else {
-    res.send('success')
-  }
 })
 
 router.get('/api/userinfo', function(req, res) {
   let username = req.query.username
-  let user = userData.find((value) => {
-    return value.username === username
+  let queryString = `select * from users where username='${username}'`
+  db.query(queryString, function(err, rows) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      if (rows.length != 0) {
+        let userinfo = {username: rows[0].username, email: rows[0].email, avatar: rows[0].avatar}
+        res.json(userinfo)
+      }
+    }
   })
-  if (user != undefined) {
-    let userinfo = {username: user.username, email: user.email, avatar: user.avatar}
-    res.json(userinfo)
-  }
 })
 
 router.get('/api/express', function(req, res) {
@@ -104,12 +165,12 @@ router.get('/api/express', function(req, res) {
   })
 })
 
-let id = 1600
+let issue = 1600
 setInterval(() => {
-  id++
+  issue++
 }, 24*60*60*1000) 
 router.get('/api/daily', function(req, res) {
-  let url = `http://v3.wufazhuce.com:8000/api/hp/detail/${id}`
+  let url = `http://v3.wufazhuce.com:8000/api/hp/detail/${issue}`
   axios.get(url, {
     params: {
       version: '3.5.0',

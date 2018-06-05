@@ -4,11 +4,16 @@
 			<div>
 				<h1 class="text">登录</h1>
 				<form class="form-pos">
-					<input type="text" placeholder="id" class="text-input" id="text" v-model="username">
+					<input type="text" placeholder="username" class="text-input" id="text" v-model="username">
 					<input type="password" placeholder="password" class="text-input" v-model="password">
 					<input type="button" class="button-log" value="登录" v-on:click="toChat">
 					<input type="button" class="button-reg" value="注册" v-on:click="toRegsiter">
 				</form>
+				<transition name="display">
+					<div class="tip-box" v-show="tip!=''">
+						<p class="tip">{{tip}}</p>
+					</div>
+				</transition>
 			</div>
 		</scroll>
 	</div>
@@ -22,14 +27,16 @@
 		data() {
 			return {
 				username: '',
-				password: ''
+				password: '',
+				tip: ''
 			}
 		},
 		components: {
 			Scroll
 		},
-		mounted() {
-			//this.checkServerToken()
+		activated() {
+			this.checkServerToken()
+			this.tip = ''
 		},
 		methods: {
 			toChat() {
@@ -38,11 +45,18 @@
     				username: this.username,
     				password: this.password
   				}).then((res) => {
-    				this.$router.push('/chat')
-						this.setUserinfo(res.data)
-						let userinfo  = JSON.stringify(res.data)
-						localStorage.setItem('userinfo',userinfo)
-  				})
+						if (res.data.username != undefined) {
+							this.$router.push('/chat')
+							this.setUserinfo(res.data)
+							let userinfo  = JSON.stringify(res.data)
+							localStorage.setItem('userinfo',userinfo)
+						}
+						else {
+							this.tip = res.data
+						}
+					})
+					this.username = ''
+					this.password = ''
 				}
 			},
 			toRegsiter() {
@@ -50,6 +64,7 @@
 			},
 			checkServerToken() {
 				let info = JSON.parse(localStorage.getItem('userinfo'))
+				console.log(info)
 				if (info != null) {
 					axios.post('/api/check', {
 						username: info.username,
@@ -140,4 +155,24 @@
 		font-size: 20px;
 		color: rgba(255,255,255,0.7);
 	}
+	.tip-box {
+		margin: 0 auto;
+		height: 40px;
+		width: 120px;
+		background-color: rgba(7,17,27,0.8);
+		border-radius: 5px;
+	}
+	.tip {
+		text-align: center;
+		color: rgb(255,255,255);
+		font-size: 18px;
+		line-height: 40px;
+	}
+	.display-enter-active, .display-enter-active {
+    transition: all 0.4s;
+  }
+  .display-enter, .display-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 </style>

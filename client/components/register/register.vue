@@ -5,12 +5,17 @@
 				<div>
 					<h1 class="text">注册</h1>
 					<form class="form-pos" action="">
-						<input type="text" class="text-input" placeholder="id">
-						<input type="text" class="text-input" placeholder="email">
-						<input type="text" class="text-input" placeholder="password">
-						<input type="text" class="text-input" placeholder="repassword">
-					<input type="button" class="button-reg" value="确认" v-on:click="toChat">
+						<input type="text" class="text-input" placeholder="username" v-model="username">
+						<input type="text" class="text-input" placeholder="email" v-model="email">
+						<input type="password" class="text-input" placeholder="password" v-model="password">
+						<input type="password" class="text-input" placeholder="repassword" v-model="repassword">
+						<input type="button" class="button-reg" value="确认" v-on:click="toLogin">
 					</form>
+					<transition name="display">
+						<div class="tip-box" v-show="tip!=''">
+							<p class="tip">{{tip}}</p>
+						</div>
+					</transition>
 				</div>
 			</scroll>
 		</div>
@@ -18,17 +23,71 @@
 
 <script type="text/ecmascript-6">
 	import Scroll from 'base/scroll/scroll'
+	import axios from 'axios'
 	export default {
+		data() {
+			return {
+				username: '',
+				email: '',
+				password: '',
+				repassword: '',
+				tip: ''
+			}
+		},
 		components: {
 			Scroll
+		},
+		activated() {
+			this.checkServerToken()
+			this.tip = ''
 		},
 		methods: {
 			back() {
 				this.$router.push('/login')
 			},
-			toChat() {
-				this.$router.push('/chat')
-      }
+			toLogin() {
+				if (this.username != '' && this.email != '' && this.password != '' && this.repassword != '') {
+					if (this.password != this.repassword) {
+						this.tip = '密码不一致'
+					}
+					else {
+						axios.post('/api/register', {
+							username: this.username,
+							email: this.email,
+							password: this.password,
+							repassword: this.repassword
+						}).then((res) => {
+							if (res.data === '注册成功') {
+								setTimeout(() => {
+									this.tip = res.data
+									this.$router.push('/login')
+								}, 1500)
+							}
+							else {
+								this.tip = res.data
+							}
+						})
+						this.username = ''
+						this.email = ''
+						this.password = ''
+						this.repassword = ''
+					}
+				}
+			},
+			checkServerToken() {
+				let info = JSON.parse(localStorage.getItem('userinfo'))
+				console.log(info)
+				if (info != null) {
+					axios.post('/api/check', {
+						username: info.username,
+						token: info.token
+					}).then((res) => {
+						if (res.data === 'success') {
+							this.$router.push('/chat')
+						}
+					})
+				}
+			}
     }
 	}
 </script>
@@ -45,11 +104,13 @@
 		background-size: cover;
 	}
 	.icon-back-pos {
+		position: relative;
     color: rgb(255,255,255);
     font-size: 20px;
     font-weight: bold;
     line-height: 55px;
     margin-left: 10px;
+		z-index: 1;
   }
 	.register {
 		position: fixed;
@@ -98,4 +159,26 @@
 		font-size: 20px;
 		color: rgba(255,255,255,0.7);
 	}
+	.tip-box {
+		position: relative;
+		bottom: 90px;
+		margin: 0 auto;
+		height: 40px;
+		width: 120px;
+		background-color: rgba(7,17,27,0.8);
+		border-radius: 5px;
+	}
+	.tip {
+		text-align: center;
+		color: rgb(255,255,255);
+		font-size: 18px;
+		line-height: 40px;
+	}
+	.display-enter-active, .display-enter-active {
+    transition: all 0.4s;
+  }
+  .display-enter, .display-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 </style>
