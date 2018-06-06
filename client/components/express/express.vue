@@ -1,34 +1,36 @@
 <template>
   <div class="express">
-    <span class="icon-back-pos icon-back" v-on:click="back"></span>
-    <div class="options">
-      <input type="text" placeholder="快递单号" class="text-input" v-model="orderNumber">
-      <div class="switch" v-on:click="toExpress">
-        <p class="express-text">{{delivery}}</p>
-        <span class="icon-forward-pos icon-forward"></span>
+    <div class="bg">
+      <span class="icon-back-pos icon-back" v-on:click="back"></span>
+      <div class="options">
+        <input type="text" placeholder="快递单号" class="text-input" v-model="orderNumber">
+        <div class="switch" v-on:click="toExpress">
+          <p class="express-text">{{delivery}}</p>
+          <span class="icon-forward-pos icon-forward"></span>
+        </div>
+        <div class="button" v-on:click="search">查询</div>
       </div>
-      <div class="button" v-on:click="search">查询</div>
-    </div>
 
-    <div class="mask" v-show="isShowExpress" v-on:click="toExpress">
-      <div class="express-list">
-        <div v-for="(value, key, index) in express" v-on:click="chooseExpress(key)" v-bind:key="index">
-          <p class="express-name">{{key}}</p>
+      <div class="mask" v-show="isShowExpress" v-on:click="toExpress">
+        <div class="express-list">
+          <div v-for="(value, key, index) in express" v-on:click="chooseExpress(key)" v-bind:key="index">
+            <p class="express-name">{{key}}</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mask" v-show="isShowDetail" v-on:click="leaveDetail">
-      <div class="express-list">
-        <div class="error" v-show="details.length===0">抱歉，输入的信息有误</div>
-        <div v-for="(value, index) in details" v-bind:key="index">
-          <div class="detail-text">
-            <div>
-              <p>{{value.message}}</p>
-              <p class="detail-time">{{value.time}}</p>
-            </div>
-            <div>
-              <p class="detail-event">{{value.context}}</p>
+      <div class="mask" v-show="isShowDetail" v-on:click="leaveDetail">
+        <div class="express-list">
+          <div class="error" v-show="details.length===0">抱歉，输入的信息有误</div>
+          <div v-for="(value, index) in details" v-bind:key="index">
+            <div class="detail-text">
+              <div>
+                <p>{{value.message}}</p>
+                <p class="detail-time">{{value.time}}</p>
+              </div>
+              <div>
+                <p class="detail-event">{{value.context}}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -82,6 +84,15 @@
 
 <style scoped>
   .express {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgb(255,255,255);
+  }
+  .bg {
     position: fixed;
     z-index: 1;
     top: 0;

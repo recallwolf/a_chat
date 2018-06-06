@@ -40,11 +40,15 @@
     created() {
       let category = this.$route.query.category
       this._getNews(category)
+      this.$nextTick(() => {
+        this.$refs.scroll.scrollTop() 
+      })
     },
     watch: {
       '$route'(to, from) {
         let category = this.$route.query.category
         this._getNews(category)
+        this.$refs.scroll.scrollTop() 
         this.$refs.scroll.refresh()
       }
     },
@@ -56,7 +60,6 @@
             parseData[i] = JSON.parse(res.data[i].content)
           }
           this.newsList = parseData
-          this.$refs.scroll.scrollTop()
         })
       },
       searchMore() {
