@@ -7,6 +7,10 @@ export const Mixin = {
       'userinfo'
     ])
   },
+  activated() {
+    this.checkServerToken()
+    this.checkVuex()
+  },
   mounted() {
     this.checkServerToken()
     this.checkVuex()

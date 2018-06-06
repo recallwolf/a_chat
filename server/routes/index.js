@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 })
 
 router.get('/api/robot', function(req, res) {
-  var url = 'http://openapi.tuling123.com/openapi/api/v2'
+  let url = 'http://openapi.tuling123.com/openapi/api/v2'
   axios.post(url, {
     perception: {
         reqType: 0,
@@ -126,9 +126,16 @@ router.post('/api/check', function(req, res) {
         res.send('fail')
       }
       else if (rows[0].token === frontEndToken) {
-        res.send('success')
+        jwt.verify(rows[0].token, 'user_pass_word', function(err, decoded) {
+          if (err) {
+            res.send('fail')
+          }
+          else {
+            res.send('success')
+          }
+        })
       }
-    }
+    }    
   })
 })
 
