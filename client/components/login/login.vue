@@ -20,7 +20,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import axios from 'axios'
 	import {mapMutations} from 'vuex'
 	import Scroll from 'base/scroll/scroll'
 	import {login, check} from 'api/user'

@@ -47,7 +47,11 @@
 			},
 			toLogin() {
 				if (this.username != '' && this.email != '' && this.password != '' && this.repassword != '') {
-					if (this.password != this.repassword) {
+					let reg = new RegExp(/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/)
+					if (!reg.test(this.email)) {
+						this.tip = '邮箱格式错误'
+					}
+					else if (this.password != this.repassword) {
 						this.tip = '密码不一致'
 					}
 					else {
@@ -62,11 +66,11 @@
 								this.tip = res
 							}
 						})
-						this.username = ''
-						this.email = ''
-						this.password = ''
-						this.repassword = ''
 					}
+					this.username = ''
+					this.email = ''
+					this.password = ''
+					this.repassword = ''
 				}
 			},
 			checkServerToken() {
