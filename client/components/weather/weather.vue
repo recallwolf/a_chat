@@ -3,9 +3,10 @@
     <div class="bg">
       <div class="mask">
         <span class="icon-back-pos icon-back" v-on:click="back"></span>
-        <scroll class="content">
+        <loading2 class="loading" v-show="Object.keys(data).length===0"></loading2>
+        <scroll class="content" v-show="Object.keys(data).length!=0">
           <div>
-            <p class="temp" v-show="Object.keys(data).length!=0">{{average}}<span class="unit">℃</span></p>
+            <p class="temp">{{average}}<span class="unit">℃</span></p>
             <p class="date">{{data.date}}</p>
             <img v-if="this.weather[0]!=undefined" v-bind:src="imgUrl" class="weather-pic">
             <span class="temp-text">{{data.cond_txt_d}}</span>
@@ -35,6 +36,7 @@
 <script type="text/ecmascript-6">
   import {getWeather} from 'api/weather'
   import Scroll from 'base/scroll/scroll'
+  import Loading2 from 'base/loading/loading2'
   export default {
     data() {
       return {
@@ -44,7 +46,8 @@
       }
     },
     components: {
-      Scroll
+      Scroll,
+      Loading2
     },
     computed: {
       average() {
@@ -109,6 +112,10 @@
     font-weight: bold;
     line-height: 55px;
     margin-left: 10px;
+  }
+  .loading {
+    position: relative;
+    top: 35%;
   }
   .content {
     position: fixed;

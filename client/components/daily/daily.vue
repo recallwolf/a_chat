@@ -4,8 +4,9 @@
       <div class="mask">
         <span class="icon-back-pos icon-back" v-on:click="back"></span>
         <div class="bottom">
-          <p class="text">{{text}}</p>
-          <a  class="icon-pos" v-bind:href="imageUrl" download="image.jpg">
+           <p class="text" v-show="text===''">努力加载中...</p>
+          <p class="text" v-show="text!=''">{{text}}</p>
+          <a class="icon-pos" v-bind:href="imageUrl" download="image.jpg">
             <span class="icon-download-pos icon-download" ></span>
           </a>
         </div>

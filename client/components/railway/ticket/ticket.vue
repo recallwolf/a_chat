@@ -21,9 +21,9 @@
         <span class="icon-back icon-next-pos"></span>
       </div>
     </div>
-    <scroll class="content" ref="scroll" v-show="ticketInfo!=null">
+    <scroll class="content" ref="scroll" v-show="ticketInfo.list!=null&&Object.keys(ticketInfo).length!=0">
       <div>
-        <div class="ticket-box" v-for="(ticket, index) in ticketInfo" v-bind:key="index">
+        <div class="ticket-box" v-for="(ticket, index) in ticketInfo.list" v-bind:key="index">
           <div class="ticket-station-box">
             <div class="ticket-station-left">
               <p class="ticket-text">{{ticket.departDepartTime}}</p>
@@ -48,9 +48,10 @@
         </div>
       </div>
     </scroll>
-    <div class="content" v-show="ticketInfo===null">
+    <div class="content" v-show="ticketInfo.list===null">
       <div class="error">抱歉，没有找到符合的车次</div>
     </div>
+    <loading v-show="Object.keys(ticketInfo).length===0"></loading>
     <div class="bottom">
       <p class="bottom-text" v-bind:class="{'bottom-text-click': click[0]}" v-on:click="sortByStartTime(0)">出发时间</p>
       <p class="bottom-text" v-bind:class="{'bottom-text-click': click[1]}" v-on:click="sortByEndTime(1)">到达时间</p>
@@ -64,10 +65,11 @@
   import {mapGetters, mapMutations} from 'vuex'
   import {getTicket} from 'api/ticket.js'
   import Scroll from 'base/scroll/scroll'
+  import loading from 'base/loading/loading'
   export default {
     data() {
       return {
-        ticketInfo: [],
+        ticketInfo: {},
         isShowPrice: true,
         click: [false, false, false, false]
       }
@@ -90,7 +92,8 @@
       }
     },
     components: {
-      Scroll
+      Scroll,
+      loading
     },
     computed: {
       ...mapGetters([
@@ -189,7 +192,7 @@
       },
       _getTicket() {
         getTicket(this.startStation, this.endStation, this.time).then((res) => {
-          this.ticketInfo = res.data.list
+          this.ticketInfo = res.data
         })
       },
       last() {
